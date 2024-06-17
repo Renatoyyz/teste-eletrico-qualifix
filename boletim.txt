@@ -1,0 +1,6 @@
+Adicionei uma var em RotinaPrg erro_geral
+agora tem que começar a tratar erros de porta, cortina de luz 
+
+Na linha 412, 444 e 461 de ExecucaoPrograma.py escrever código para acender luz verde da torre
+Na linha 438, 455 e 471 de ExecucaoPrograma.py escrever código para acender luz vermelha da torre
+Na linha 240 de ExecucaoPrograma.py escrever código para apagar luz verde e vermelha da torre

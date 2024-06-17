@@ -1,0 +1,5 @@
+<RCC>
+  <qresource prefix="logo">
+    <file>logo_qualifix.JPG</file>
+  </qresource>
+</RCC>
