@@ -29,9 +29,9 @@ class RotinaPrg(threading.Thread):
     def __init__(self, dado=None, io=None, db=None):
         threading.Thread.__init__(self)
 
-        self.TEMPO_DESCIDA_PISTAO = 3500
-        self.TEMPO_SUBIDA_PISTAO = 3500
-        self.TEMPO_ACIONAMENTO_RELE = 1000
+        self.TEMPO_DESCIDA_PISTAO = 2000
+        self.TEMPO_SUBIDA_PISTAO = 2000
+        self.TEMPO_ACIONAMENTO_RELE = 800
 
         self.dado=dado
         self.io=io

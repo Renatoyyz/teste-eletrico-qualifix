@@ -107,10 +107,11 @@ class ExecutaRotinaThread(QObject):
                             
                 if self.esquerda_ok == True and self.direita_ok == True:
                     self.operacao.rotina.acende_verde()
+                    self.operacao.rotina.sobe_pistao()
                 else:
-                    self.operacao.rotina.acende_vermelho()
+                    self.operacao.rotina.acende_vermelho()# Se acender vermelho, continua com pistão em baixo
                 
-                self.operacao.rotina.sobe_pistao()
+                
                 self.operacao.qual_teste = self.operacao.SEM_TESTE
                 self.operacao.muda_cor_obj("lbContinuIndicaE",self.operacao.CINZA)
                 self.operacao.muda_cor_obj("lbContinuIndicaD",self.operacao.CINZA)
@@ -268,7 +269,7 @@ class TelaExecucao(QDialog):
         self.ui.lbDataHora.setText(self._translate("TelaExecucao", f"<html><head/><body><p align=\"center\">{data_hora}</p></body></html>"))
 
         # if self.execucao_habilita_desabilita == True and  self.io.io_rpi.bot_acio_e == 0 and self.io.io_rpi.bot_acio_d == 0:
-        if self.execucao_habilita_desabilita == True and  self.io.io_rpi.bot_acio_e == 0 and self.io.io_rpi.bot_acio_d == 0:
+        if self.execucao_habilita_desabilita == True and  self.io.io_rpi.bot_acio_e == 0 and self.io.io_rpi.bot_acio_d == 0 and self._nao_passsou_peca == False:
             while(self.io.io_rpi.bot_acio_e == 0 or self.io.io_rpi.bot_acio_d == 0):
                 pass
             # self.rotina.sobe_pistao()
@@ -471,6 +472,9 @@ class TelaExecucao(QDialog):
                             for i in iso_d:
                                 if i[2] == 1:
                                     self.iso_d.append(i)
+                        self.pausa_execucao()
+                        self.msg.exec(msg="Favor apertar iniciar para ter acesso a peça.")
+
                         self._nao_passsou_peca = True
 
                         #escrever aqui o liga Vermelho da torre
@@ -489,7 +493,8 @@ class TelaExecucao(QDialog):
                             if i[2] == 1:
                                 self.iso_e.append(i)
                         self._nao_passsou_peca = True
-
+                        self.pausa_execucao()
+                        self.msg.exec(msg="Favor apertar iniciar para ter acesso a peça.")
                         #escrever aqui o liga vermelha da torre
 
             elif self.habili_desbilita_direito == True and self.habili_desbilita_esquerdo == False:# Se só direito estiver habilitado
@@ -506,6 +511,8 @@ class TelaExecucao(QDialog):
                             if i[2] == 1:
                                 self.iso_d.append(i)
                         self._nao_passsou_peca = True
+                        self.pausa_execucao()
+                        self.msg.exec(msg="Favor apertar iniciar para ter acesso a peça.")
                         #escrever aqui o liga vermelho da torre
 
         self._cnt_acionamento_botao=0
