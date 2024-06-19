@@ -7,22 +7,36 @@ class FakeRPiGPIO:
     BCM = "BCM"
     PUD_UP = "PUD_UP"
     IN = "IN"
+    OUT = "OUT"
+    HIGH = 1
+    LOW = 0
 
-    @staticmethod
-    def setmode(mode):
-        pass
+    def __init__(self):
+        self.pins = {}
 
-    @staticmethod
-    def setwarnings(state):
-        pass
+    def setmode(self, mode):
+        self.mode = mode
 
-    @staticmethod
-    def setup(pin, direction, pull_up_down=None):
-        pass
+    def setwarnings(self, state):
+        self.warnings = state
 
-    @staticmethod
-    def input(pin):
-        return 1  # Altere isso conforme necessário
+    def setup(self, pin, direction, pull_up_down=None):
+        self.pins[pin] = {'direction': direction, 'state': self.HIGH if pull_up_down == self.PUD_UP else self.LOW}
+
+    def input(self, pin):
+        if pin in self.pins:
+            return self.pins[pin]['state']
+        raise ValueError(f"Pin {pin} not set up.")
+
+    def output(self, pin, state):
+        if pin in self.pins and self.pins[pin]['direction'] == self.OUT:
+            self.pins[pin]['state'] = state
+        else:
+            raise ValueError(f"Pin {pin} not set up or not set as output.")
+
+    def cleanup(self):
+        self.pins.clear()
+
 
 class InOut:
     def __init__(self):
@@ -135,7 +149,7 @@ class IO_MODBUS(threading.Thread):
 
         self.ser = serial.Serial(
                                     port='/dev/ttyUSB0',  # Porta serial padrão no Raspberry Pi 4
-                                    # port='/dev/ttyS0',  # Porta serial padrão no Raspberry Pi 4
+                                    # port='/dev/tty.URT0',  # Porta serial padrão no Raspberry Pi 4
                                     baudrate=9600,       # Taxa de baud
                                     bytesize=8,
                                     parity="N",

@@ -59,6 +59,7 @@ Depois de instalado globalmente:
 
 ```text
 ln -s /usr/lib/python3/dist-packages/PyQt5/ .env/lib/python3.11/site-packages/PyQt5
+ln -s /Users/renatooliveira/.pyenv/versions/3.10.8/lib/python3.10/site-packages/PyQt5/ .env/lib/python3.10/site-packages/PyQt5
 ```
 
 Onde '.env' é o ambiente que foi criado e pode ser qualquer nome.

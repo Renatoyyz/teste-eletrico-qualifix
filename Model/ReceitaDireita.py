@@ -706,8 +706,8 @@ class TelaReceitaDireitaDieletrico(QDialog):
             self.habilita_todos_eletrodos()
 
     def check_combinacao_eletrodos(self,num):
-        obj_eletrodo_1 = f"cbxEletrodo{self.rotina.isolacao_direito[f'ligacao{num}'][0]}_D"
-        obj_eletrodo_2 = f"cbxEletrodo{self.rotina.isolacao_direito[f'ligacao{num}'][1]}_D"
+        obj_eletrodo_1 = f"cbxEletrodo{self.rotina.isolacao_direito[f'ligacao{num}'][3]}_D"
+        obj_eletrodo_2 = f"cbxEletrodo{self.rotina.isolacao_direito[f'ligacao{num}'][4]}_D"
 
         cur_obj_obj_eletrodo_1 = getattr(self.ui, obj_eletrodo_1)
         cur_obj_obj_eletrodo_2 = getattr(self.ui, obj_eletrodo_2)
@@ -719,7 +719,7 @@ class TelaReceitaDireitaDieletrico(QDialog):
         cur_obj_obj_eletrodo_2.setEnabled(True)
         
         for i in range(1,9):
-            if i!= self.rotina.isolacao_direito[f'ligacao{num}'][0] and i!= self.rotina.isolacao_direito[f'ligacao{num}'][1]:
+            if i!= self.rotina.isolacao_direito[f'ligacao{num}'][3] and i!= self.rotina.isolacao_direito[f'ligacao{num}'][4]:
                 cur_obj_obj_eletrodo = getattr(self.ui, f"cbxEletrodo{i}_D")
                 cur_obj_obj_eletrodo.setChecked(False)
                 cur_obj_obj_eletrodo.setEnabled(False)

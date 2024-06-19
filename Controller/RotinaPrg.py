@@ -41,7 +41,7 @@ class RotinaPrg(threading.Thread):
         self.eletrodo_testando_condu_e = [0,0]
         self.eletrodo_testando_condu_d = [0,0]
 
-        # Veriável que vei ser acessado por outra classe [0,0] -> indice 0 = associado com o conector da peça -> indice 1 associado com conector de eletrodos
+        # Veriável que vai ser acessado por outra classe [0,0] -> indice 0 = associado com o conector da peça -> indice 1 associado com conector de eletrodos
         self.eletrodo_testando_iso_e = [0,0]
         self.eletrodo_testando_iso_d = [0,0]
 
