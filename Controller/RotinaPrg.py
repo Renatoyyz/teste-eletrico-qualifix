@@ -345,8 +345,8 @@ class RotinaPrg(threading.Thread):
 
         for i in range(1,9):
             if self.condutividade_esquerdo[f"ligacao{i}"][3] != "":
-                # Associa qual eletrodo está sendo assiciado, para acesso externo à classe
-                self.eletrodo_testando_condu_e[0]=i
+                # Associa qual eletrodo está sendo associado, para acesso externo à classe
+                self.eletrodo_testando_condu_e[0]= self.condutividade_esquerdo[f"ligacao{i}"][1][0]
                 # Aciona pino da tomada de conectores - DO_0x do ADR_1
                 self.io.wp_8027(self.io.ADR_1,self.condutividade_esquerdo[f"ligacao{i}"][0],1)
                 
@@ -383,7 +383,7 @@ class RotinaPrg(threading.Thread):
         for i in range(1,9):
             if self.condutividade_direito[f"ligacao{i}"][3] != "":
                 # Associa qual eletrodo está sendo assiciado, para acesso externo à classe
-                self.eletrodo_testando_condu_d[0]=i
+                self.eletrodo_testando_condu_d[0]=self.condutividade_direito[f"ligacao{i}"][1][0]
                 # Aciona pino da tomada de conectores - DO_0x do ADR_1
                 self.io.wp_8027(self.io.ADR_2,self.condutividade_direito[f"ligacao{i}"][0],1)
                 

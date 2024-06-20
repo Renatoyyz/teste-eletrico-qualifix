@@ -123,6 +123,8 @@ class IO_MODBUS(threading.Thread):
         self.valor_saida_esquerdo = 0
         self.valor_saida_geral = 0
 
+        self.fake_modbus = False
+
         self.entradas_wp8026 = {
             "in_1": 0,
             "in_2": 0,
@@ -180,6 +182,11 @@ class IO_MODBUS(threading.Thread):
         return crc
 
     def wp_8027(self, adr, out, on_off):
+        if self.fake_modbus == False:
+           return self.wp_8027_(adr=adr, out=out,on_off=on_off)
+        else:
+            return -1
+    def wp_8027_(self, adr, out, on_off):
         dados_recebidos = None
         mask = 0
         if adr == self.ADR_1:
@@ -190,6 +197,8 @@ class IO_MODBUS(threading.Thread):
             mask = self.valor_saida_geral
         elif adr == self.ADR_4:
             mask = self.valor_saida_geral
+
+
 
         if (adr == self.ADR_1 or adr == self.ADR_2 or adr == self.ADR_3 or adr == self.ADR_4) and (on_off==1):  # Corrigindo a condição
             id_loc = hex(adr)[2:]
@@ -289,6 +298,11 @@ class IO_MODBUS(threading.Thread):
             return -1 # Indica erro de alguma natureza....
         
     def wp_8026(self, adr, input):
+        if self.fake_modbus == False:
+            return self.wp_8026_(adr=adr, input=input)
+        else:
+            return 1
+    def wp_8026_(self, adr, input):
         dados_recebidos = None
 
         if adr == self.ADR_3:

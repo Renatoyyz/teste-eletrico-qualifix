@@ -66,16 +66,28 @@ class ExecutaRotinaThread(QObject):
                         result_iso_e = self.operacao.rotina.esquerdo_direito_isolacao(0)# Testa O lado esquerdo
 
                         # Verifica condutividade
-                        cond = all(c[2] != 0 for c in result_condu_e)                    
+                        cond = all(c[2] != 0 for c in result_condu_e)   
+                        if cond == True:
+                            self.operacao.esquerda_condu_ok = 2 # Sinaliza para execução, que passou
+                        else:
+                            self.operacao.esquerda_condu_ok = 1 # Sinaliza para execução, que não passou
+                            
                         # Verifica isolação
-                        iso = all(i[2] != 1 for i in result_iso_e)  
+                        iso = all(i[2] != 1 for i in result_iso_e) 
+                        if iso == True:
+                            self.operacao.esquerda_iso_ok = 2 # Sinaliza para execução, que passou
+                        else:
+                            self.operacao.esquerda_iso_ok = 1 # Sinaliza para execução, que não passou
+
                         # Se teste de condutividade e de isolação passaram
                         if cond == True and iso == True:
                             self.operacao.rotina.marca_peca_esquerda()
                             self.esquerda_ok = True
                         else:
                             self.esquerda_ok = False
-                            
+
+                        # garante que todas os eletrodos fiquem verdes para ser tocados depois
+                        self.operacao._carrega_eletrodos(self.operacao.rotina.coord_eletrodo_esquerdo, "E")# O 'E' é para formar o texto que criará o objeto lbEletrodo1_E   
                         
                         # if result_condu_e[2] == 1 and result_iso_e[2] == 0: # Se tste de condutividade e de isolação passaram
                         #     self.operacao.io.wp_8027(self.io.ADR_3, 2, 1) # Aciona pistão de marcação esquerdo
@@ -90,15 +102,27 @@ class ExecutaRotinaThread(QObject):
                         result_iso_d = self.operacao.rotina.esquerdo_direito_isolacao(1)# Testa O lado direito
 
                         # Verifica condutividade
-                        cond = all(c[2] != 0 for c in result_condu_d)                    
+                        cond = all(c[2] != 0 for c in result_condu_d)  
+                        if cond == True:
+                            self.operacao.direita_condu_ok = 2 # Sinaliza para execução, que passou
+                        else:
+                            self.operacao.direita_condu_ok = 1 # Sinaliza para execução, que não passou
+
                         # Verifica isolação
-                        iso = all(i[2] != 1 for i in result_iso_d)  
+                        iso = all(i[2] != 1 for i in result_iso_d)
+                        if iso == True:
+                            self.operacao.direita_iso_ok = 2 # Sinaliza para execução, que passou
+                        else:
+                            self.operacao.direita_iso_ok = 1 # Sinaliza para execução, que não passou
+
                         # Se teste de condutividade e de isolação passaram
                         if cond == True and iso ==  True:
                             self.operacao.rotina.marca_peca_direita()
                             self.direita_ok = True
                         else:
                             self.direita_ok = False
+                        # garante que todas os eletrodos fiquem verdes para ser tocados depois
+                        self.operacao._carrega_eletrodos(self.operacao.rotina.coord_eletrodo_direito, "D")# O 'D' é para formar o texto que criará o objeto lbEletrodo1_D
                         
                         # if result_condu_d[2] == 1 and result_iso_d[2] == 0: # Se tste de condutividade e de isolação passaram
                         #     self.operacao.io.wp_8027(self.io.ADR_3, 3, 1) # Aciona pistão de marcação esquerdo
@@ -113,10 +137,10 @@ class ExecutaRotinaThread(QObject):
                 
                 
                 self.operacao.qual_teste = self.operacao.SEM_TESTE
-                self.operacao.muda_cor_obj("lbContinuIndicaE",self.operacao.CINZA)
-                self.operacao.muda_cor_obj("lbContinuIndicaD",self.operacao.CINZA)
-                self.operacao.muda_cor_obj("lbIsolaIndicaE",self.operacao.CINZA)
-                self.operacao.muda_cor_obj("lbIsolaIndicaD",self.operacao.CINZA)
+                self.operacao.indica_cor_teste_condu("lbContinuIndicaE",self.operacao.CINZA, 0)
+                self.operacao.indica_cor_teste_condu("lbContinuIndicaD",self.operacao.CINZA, 1)
+                self.operacao.indica_cor_teste_iso("lbIsolaIndicaE",self.operacao.CINZA, 0)
+                self.operacao.indica_cor_teste_iso("lbIsolaIndicaD",self.operacao.CINZA, 1)
 
                 # Emite o evento para conclusão so processo
                 self.sinal_execucao.emit(result_condu_e,result_iso_e,result_condu_d,result_iso_d)
@@ -152,6 +176,15 @@ class TelaExecucao(QDialog):
         self.em_execucao = False
         self._nao_passsou_peca = False
 
+        # Variáveis para armazenar condicão de condutividade e isolação dos lados esquerdo e direito
+        # 0 = indica que não está sendo avaliado
+        # 1 = indica que não passou
+        # 2 = indica que passou
+        self.esquerda_condu_ok = 0
+        self.esquerda_iso_ok = 0
+        self.direita_condu_ok = 0
+        self.direita_iso_ok = 0
+
         # Flags para estado de execução
         self.SEM_TESTE = 0
         self.TESTE_COND_E = 1
@@ -185,6 +218,10 @@ class TelaExecucao(QDialog):
         self.iso_e = []
         self.cond_d = []
         self.iso_d = []
+
+        # Usa essa variável para espelhar self.rotina.coord_eletrodo_esquerdo e self.rotina.coord_eletrodo_direito para que se exclua os valores None
+        self.coord_eletrodo_esquerdo = []
+        self.coord_eletrodo_direito = []
 
         #Usado para mostrar cada erro a medida que toca na imagem
         self._cnt_pagina_erro = 0
@@ -261,6 +298,7 @@ class TelaExecucao(QDialog):
 
 
     def muda_cor_obj(self, obj_str, cor):
+    
         obj_tom_conec = f"{obj_str}"
         cur_obj_tom_conec = getattr(self.ui, obj_tom_conec)
         cur_obj_tom_conec.setStyleSheet(f"background-color: rgb({cor});")
@@ -268,13 +306,14 @@ class TelaExecucao(QDialog):
     def thread_atualizar_valor(self, data_hora):
         self.ui.lbDataHora.setText(self._translate("TelaExecucao", f"<html><head/><body><p align=\"center\">{data_hora}</p></body></html>"))
 
-        # if self.execucao_habilita_desabilita == True :
-        if self.execucao_habilita_desabilita == True and  self.io.io_rpi.bot_acio_e == 0 and self.io.io_rpi.bot_acio_d == 0 and self._nao_passsou_peca == False:
+        if self.execucao_habilita_desabilita == True :
+        # if self.execucao_habilita_desabilita == True and  self.io.io_rpi.bot_acio_e == 0 and self.io.io_rpi.bot_acio_d == 0 and self._nao_passsou_peca == False:
             while(self.io.io_rpi.bot_acio_e == 0 or self.io.io_rpi.bot_acio_d == 0):
                 pass
             # self.rotina.sobe_pistao()
             #escrever aqui o desliga verde e vermelho da torre
             self.rotina.apaga_torre()
+
 
             if self._cnt_acionamento_botao < 1:
                 # time.sleep(0.1)
@@ -289,35 +328,44 @@ class TelaExecucao(QDialog):
                 self.ui.lbAvisos.setText(self._translate("TelaExecucao", "<html><head/><body><p align=\"center\">Testando</p></body></html>"))
                 self.ui.lbAvisos.setStyleSheet(f"background-color: rgb({self.VERDE});")
                 self._cnt_acionamento_botao+=1# Incrementa para não passar por aqui novamente
+
+                # Variáveis para armazenar condicão de condutividade e isolação dos lados esquerdo e direito colocados em condição de não está sendo avaliado
+                # 0 = indica que não está sendo avaliado
+                # 1 = indica que não passou
+                # 2 = indica que passou
+                self.esquerda_condu_ok = 0
+                self.esquerda_iso_ok = 0
+                self.direita_condu_ok = 0
+                self.direita_iso_ok = 0
             
 
-        if self.em_execucao == True and self._nao_passsou_peca == False:
+        if self.em_execucao == True and self._nao_passsou_peca == False:# Se está em execução e peça passou
 
             if self.qual_teste == self.SEM_TESTE:
-                self.muda_cor_obj("lbContinuIndicaE",self.CINZA)
-                self.muda_cor_obj("lbContinuIndicaD",self.CINZA)
-                self.muda_cor_obj("lbIsolaIndicaE",self.CINZA)
-                self.muda_cor_obj("lbIsolaIndicaD",self.CINZA)
+                self.indica_cor_teste_condu("lbContinuIndicaE",self.CINZA, 0)
+                self.indica_cor_teste_condu("lbContinuIndicaD",self.CINZA, 1)
+                self.indica_cor_teste_iso("lbIsolaIndicaE",self.CINZA, 0)
+                self.indica_cor_teste_iso("lbIsolaIndicaD",self.CINZA, 1)
             elif self.qual_teste == self.TESTE_COND_E:
-                self.muda_cor_obj("lbContinuIndicaE",self.VERDE)
-                self.muda_cor_obj("lbContinuIndicaD",self.CINZA)
-                self.muda_cor_obj("lbIsolaIndicaE",self.CINZA)
-                self.muda_cor_obj("lbIsolaIndicaD",self.CINZA)
+                self.indica_cor_teste_condu("lbContinuIndicaE",self.VERDE, 0)
+                self.indica_cor_teste_condu("lbContinuIndicaD",self.CINZA, 1)
+                self.indica_cor_teste_iso("lbIsolaIndicaE",self.CINZA, 0)
+                self.indica_cor_teste_iso("lbIsolaIndicaD",self.CINZA, 1)
             elif self.qual_teste == self.TESTE_COND_D:
-                self.muda_cor_obj("lbContinuIndicaE",self.CINZA)
-                self.muda_cor_obj("lbContinuIndicaD",self.VERDE)
-                self.muda_cor_obj("lbIsolaIndicaE",self.CINZA)
-                self.muda_cor_obj("lbIsolaIndicaD",self.CINZA)
+                self.indica_cor_teste_condu("lbContinuIndicaE",self.CINZA, 0)
+                self.indica_cor_teste_condu("lbContinuIndicaD",self.VERDE, 1)
+                self.indica_cor_teste_iso("lbIsolaIndicaE",self.CINZA, 0)
+                self.indica_cor_teste_iso("lbIsolaIndicaD",self.CINZA, 1)
             elif self.qual_teste == self.TESTE_ISO_E:
-                self.muda_cor_obj("lbContinuIndicaE",self.CINZA)
-                self.muda_cor_obj("lbContinuIndicaD",self.CINZA)
-                self.muda_cor_obj("lbIsolaIndicaE",self.VERDE)
-                self.muda_cor_obj("lbIsolaIndicaD",self.CINZA)
+                self.indica_cor_teste_condu("lbContinuIndicaE",self.CINZA, 0)
+                self.indica_cor_teste_condu("lbContinuIndicaD",self.CINZA, 1)
+                self.indica_cor_teste_iso("lbIsolaIndicaE",self.VERDE, 0)
+                self.indica_cor_teste_iso("lbIsolaIndicaD",self.CINZA, 1)
             elif self.qual_teste == self.TESTE_ISO_D:
-                self.muda_cor_obj("lbContinuIndicaE",self.CINZA)
-                self.muda_cor_obj("lbContinuIndicaD",self.CINZA)
-                self.muda_cor_obj("lbIsolaIndicaE",self.CINZA)
-                self.muda_cor_obj("lbIsolaIndicaD",self.VERDE)
+                self.indica_cor_teste_condu("lbContinuIndicaE",self.CINZA, 0)
+                self.indica_cor_teste_condu("lbContinuIndicaD",self.CINZA, 1)
+                self.indica_cor_teste_iso("lbIsolaIndicaE",self.CINZA, 0)
+                self.indica_cor_teste_iso("lbIsolaIndicaD",self.VERDE, 1)
             
             self.cor_eletrodo_teste()
 
@@ -342,8 +390,8 @@ class TelaExecucao(QDialog):
 
 
                     if self.habili_desbilita_esquerdo == True and self.cond_e != []:
-                        self._carrega_eletrodos_esquerdo(self.rotina.coord_eletrodo_esquerdo,self.cond_e[self._cnt_pagina_erro][0], -1)
-                        self.muda_cor_obj(f"lbEletrodo{self.cond_e[self._cnt_pagina_erro][0]}_E",self.VERMELHO)
+                        self._carrega_eletrodos_esquerdo(self.rotina.coord_eletrodo_esquerdo, self.rotina.condutividade_esquerdo[f"ligacao{self.cond_e[self._cnt_pagina_erro][0]}"][1][0] , -1)
+                        self.muda_cor_obj(f"lbEletrodo{self.rotina.condutividade_esquerdo[f'ligacao{self.cond_e[self._cnt_pagina_erro][0]}'][1][0]}_E",self.VERMELHO)
                         self.ui.lbAvisos.setText(self._translate("TelaExecucao", f"<html><head/><body><p align=\"center\">Condutor: {self.cond_e[self._cnt_pagina_erro][1]}</p></body></html>"))
                         self.ui.lbAvisos.setStyleSheet(f"background-color: rgb({self.VERMELHO});")
                     else:
@@ -357,8 +405,8 @@ class TelaExecucao(QDialog):
                     
 
                     if self.habili_desbilita_direito == True and self.cond_d != []:
-                        self._carrega_eletrodos_direito(self.rotina.coord_eletrodo_direito,self.cond_d[self._cnt_pagina_erro][0], -1)
-                        self.muda_cor_obj(f"lbEletrodo{self.cond_d[self._cnt_pagina_erro][0]}_D",self.VERMELHO)
+                        self._carrega_eletrodos_direito(self.rotina.coord_eletrodo_direito,self.rotina.condutividade_direito[f"ligacao{self.cond_d[self._cnt_pagina_erro][0]}"][1][0] , -1)
+                        self.muda_cor_obj(f"lbEletrodo{self.rotina.condutividade_direito[f'ligacao{self.cond_d[self._cnt_pagina_erro][0]}'][1][0]}_D",self.VERMELHO)
                         self.ui.lbAvisos.setText(self._translate("TelaExecucao", f"<html><head/><body><p align=\"center\">Condutor: {self.cond_d[self._cnt_pagina_erro][1]}</p></body></html>"))
                         self.ui.lbAvisos.setStyleSheet(f"background-color: rgb({self.VERMELHO});")
                     else:
@@ -401,6 +449,40 @@ class TelaExecucao(QDialog):
         else:
             self._ofset_temo=0
 
+    def indica_cor_teste_condu(self, obj, cor, lado):
+        if lado == 0: # Se for esquerdo
+            # Se condições de teste, que é verificado em ExecutaRotinaThread, tiver algum erro, pinta de vermelho
+            if self.esquerda_condu_ok == 1:
+                self.muda_cor_obj(obj,self.VERMELHO)
+            elif self.esquerda_condu_ok == 2:# Se estiver ok, pinta de verde
+                self.muda_cor_obj(obj,self.VERDE)
+            else:
+                self.muda_cor_obj(obj,cor) # caso contrario pinta na cor requerida
+        else:
+            # Se condições de teste, que é verificado em ExecutaRotinaThread, tiver algum erro, pinta de vermelho
+            if self.direita_condu_ok == 1:
+                self.muda_cor_obj(obj,self.VERMELHO)
+            elif self.direita_condu_ok == 2:# Se estiver ok, pinta de verde
+                self.muda_cor_obj(obj,self.VERDE)
+            else:
+                self.muda_cor_obj(obj,cor) # caso contrario pinta na cor requerida
+    def indica_cor_teste_iso(self, obj, cor, lado):
+        if lado == 0: # Se for esquerdo
+            # Se condições de teste, que é verificado em ExecutaRotinaThread, tiver algum erro, pinta de vermelho
+            if self.esquerda_iso_ok == 1:
+                self.muda_cor_obj(obj,self.VERMELHO)
+            elif self.esquerda_iso_ok == 2:# Se estiver ok, pinta de verde
+                self.muda_cor_obj(obj,self.VERDE)
+            else:
+                self.muda_cor_obj(obj,cor) # caso contrario pinta na cor requerida
+        else:
+            # Se condições de teste, que é verificado em ExecutaRotinaThread, tiver algum erro, pinta de vermelho
+            if self.direita_iso_ok == 1:
+                self.muda_cor_obj(obj,self.VERMELHO)
+            elif self.direita_iso_ok == 2:# Se estiver ok, pinta de verde
+                self.muda_cor_obj(obj,self.VERDE)
+            else:
+                self.muda_cor_obj(obj,cor) # caso contrario pinta na cor requerida
     
     def cor_eletrodo_teste(self):
 
@@ -651,6 +733,16 @@ class TelaExecucao(QDialog):
         self.ui.lbAvisos.setStyleSheet(f"background-color: rgb({self.VERDE});")
         try:
             self.id, self.rotina.nome_programa, self.rotina.url_img_esquerdo, self.rotina.url_img_direito, self.rotina.coord_eletrodo_esquerdo, self.rotina.coord_eletrodo_direito, self.rotina.condutividade_esquerdo, self.rotina.condutividade_direito, self.rotina.isolacao_esquerdo, self.rotina.isolacao_direito = self.database.search_name_receita(self.nome_prog)
+            # Espelha coordenadas, sem None
+            self.coord_eletrodo_esquerdo.append(None)# Garante que o primeiro seja None
+            self.coord_eletrodo_direito.append(None)# Garante que o primeiro seja None
+            for c_e in range(1, len(self.rotina.coord_eletrodo_esquerdo)):
+                if self.rotina.coord_eletrodo_esquerdo[c_e] != None:
+                    self.coord_eletrodo_esquerdo.append(self.rotina.coord_eletrodo_esquerdo[c_e])
+            for c_d in range(1, len(self.rotina.coord_eletrodo_direito)):
+                if self.rotina.coord_eletrodo_direito[c_d] != None:
+                    self.coord_eletrodo_direito.append(self.rotina.coord_eletrodo_direito[c_d])
+
             if self.continuacao == True:# Se for uma continuação de outra rotina
                 self.rotina_iniciada = self.continuacao
                 self.ui.txAprovadoE.setText(str(self.db_rotina[2]))
@@ -860,6 +952,15 @@ class TelaExecucao(QDialog):
         self._visualiza_iso_d = False
         self._retrabalho = True
 
+        # Variáveis para armazenar condicão de condutividade e isolação dos lados esquerdo e direito colocados em condição de não está sendo avaliado
+        # 0 = indica que não está sendo avaliado
+        # 1 = indica que não passou
+        # 2 = indica que passou
+        self.esquerda_condu_ok = 0
+        self.esquerda_iso_ok = 0
+        self.direita_condu_ok = 0
+        self.direita_iso_ok = 0
+
         # Guarda o valor antigo de direito e esquerdo
         self.habili_desbilita_esquerdo_old = self.habili_desbilita_esquerdo
         self.habili_desbilita_direito_old = self.habili_desbilita_direito
@@ -898,6 +999,15 @@ class TelaExecucao(QDialog):
         self._visualiza_condu_d = False
         self._visualiza_iso_e = False
         self._visualiza_iso_d = False
+
+        # Variáveis para armazenar condicão de condutividade e isolação dos lados esquerdo e direito colocados em condição de não está sendo avaliado
+        # 0 = indica que não está sendo avaliado
+        # 1 = indica que não passou
+        # 2 = indica que passou
+        self.esquerda_condu_ok = 0
+        self.esquerda_iso_ok = 0
+        self.direita_condu_ok = 0
+        self.direita_iso_ok = 0
 
         if (self.cond_e != [] or self.iso_e != []) and (self.cond_d != [] or self.iso_d != []):# se os dois lados estiverem com problemas
             self._cnt_peca_reprovou_e+=1
