@@ -219,10 +219,6 @@ class TelaExecucao(QDialog):
         self.cond_d = []
         self.iso_d = []
 
-        # Usa essa variável para espelhar self.rotina.coord_eletrodo_esquerdo e self.rotina.coord_eletrodo_direito para que se exclua os valores None
-        self.coord_eletrodo_esquerdo = []
-        self.coord_eletrodo_direito = []
-
         #Usado para mostrar cada erro a medida que toca na imagem
         self._cnt_pagina_erro = 0
 
@@ -306,8 +302,8 @@ class TelaExecucao(QDialog):
     def thread_atualizar_valor(self, data_hora):
         self.ui.lbDataHora.setText(self._translate("TelaExecucao", f"<html><head/><body><p align=\"center\">{data_hora}</p></body></html>"))
 
-        if self.execucao_habilita_desabilita == True :
-        # if self.execucao_habilita_desabilita == True and  self.io.io_rpi.bot_acio_e == 0 and self.io.io_rpi.bot_acio_d == 0 and self._nao_passsou_peca == False:
+        # if self.execucao_habilita_desabilita == True :
+        if self.execucao_habilita_desabilita == True and  self.io.io_rpi.bot_acio_e == 0 and self.io.io_rpi.bot_acio_d == 0 and self._nao_passsou_peca == False:
             while(self.io.io_rpi.bot_acio_e == 0 or self.io.io_rpi.bot_acio_d == 0):
                 pass
             # self.rotina.sobe_pistao()
@@ -733,15 +729,6 @@ class TelaExecucao(QDialog):
         self.ui.lbAvisos.setStyleSheet(f"background-color: rgb({self.VERDE});")
         try:
             self.id, self.rotina.nome_programa, self.rotina.url_img_esquerdo, self.rotina.url_img_direito, self.rotina.coord_eletrodo_esquerdo, self.rotina.coord_eletrodo_direito, self.rotina.condutividade_esquerdo, self.rotina.condutividade_direito, self.rotina.isolacao_esquerdo, self.rotina.isolacao_direito = self.database.search_name_receita(self.nome_prog)
-            # Espelha coordenadas, sem None
-            self.coord_eletrodo_esquerdo.append(None)# Garante que o primeiro seja None
-            self.coord_eletrodo_direito.append(None)# Garante que o primeiro seja None
-            for c_e in range(1, len(self.rotina.coord_eletrodo_esquerdo)):
-                if self.rotina.coord_eletrodo_esquerdo[c_e] != None:
-                    self.coord_eletrodo_esquerdo.append(self.rotina.coord_eletrodo_esquerdo[c_e])
-            for c_d in range(1, len(self.rotina.coord_eletrodo_direito)):
-                if self.rotina.coord_eletrodo_direito[c_d] != None:
-                    self.coord_eletrodo_direito.append(self.rotina.coord_eletrodo_direito[c_d])
 
             if self.continuacao == True:# Se for uma continuação de outra rotina
                 self.rotina_iniciada = self.continuacao
