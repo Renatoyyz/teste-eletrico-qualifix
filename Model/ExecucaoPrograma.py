@@ -313,7 +313,9 @@ class TelaExecucao(QDialog):
 
             if self._cnt_acionamento_botao < 1:
                 # time.sleep(0.1)
+                # Reseta erros que estão em rotina
                 self.rotina.flag_erro_geral = False
+
                 self._nao_passsou_peca = False
                 self.em_execucao = True
                 self.tempo_ciclo = 0
@@ -890,6 +892,7 @@ class TelaExecucao(QDialog):
         self.ui.lbAvisos.setText(self._translate("TelaExecucao", "<html><head/><body><p align=\"center\">Parada</p></body></html>"))
         self.ui.lbAvisos.setStyleSheet(f"background-color: rgb({self.VERDE});")
         self._cnt_acionamento_botao=0
+
 
     def para_execucao(self):
         self.msg_box.exec(msg="Deseja realmente encerar rotina?")
