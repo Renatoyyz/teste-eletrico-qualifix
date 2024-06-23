@@ -301,7 +301,7 @@ class IO_MODBUS(threading.Thread):
         if self.fake_modbus == False:
             return self.wp_8026_(adr=adr, input=input)
         else:
-            return 1
+            return 0
     def wp_8026_(self, adr, input):
         dados_recebidos = None
 

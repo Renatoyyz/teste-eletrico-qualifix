@@ -71,6 +71,7 @@ class ExecutaRotinaThread(QObject):
                             self.operacao.esquerda_condu_ok = 2 # Sinaliza para execução, que passou
                         else:
                             self.operacao.esquerda_condu_ok = 1 # Sinaliza para execução, que não passou
+                            self.operacao._visualiza_condu_e = True
                             
                         # Verifica isolação
                         iso = all(i[2] != 1 for i in result_iso_e) 
@@ -78,6 +79,7 @@ class ExecutaRotinaThread(QObject):
                             self.operacao.esquerda_iso_ok = 2 # Sinaliza para execução, que passou
                         else:
                             self.operacao.esquerda_iso_ok = 1 # Sinaliza para execução, que não passou
+                            self.operacao._visualiza_iso_e = True
 
                         # Se teste de condutividade e de isolação passaram
                         if cond == True and iso == True:
@@ -107,6 +109,7 @@ class ExecutaRotinaThread(QObject):
                             self.operacao.direita_condu_ok = 2 # Sinaliza para execução, que passou
                         else:
                             self.operacao.direita_condu_ok = 1 # Sinaliza para execução, que não passou
+                            self.operacao._visualiza_condu_d = True
 
                         # Verifica isolação
                         iso = all(i[2] != 1 for i in result_iso_d)
@@ -114,6 +117,7 @@ class ExecutaRotinaThread(QObject):
                             self.operacao.direita_iso_ok = 2 # Sinaliza para execução, que passou
                         else:
                             self.operacao.direita_iso_ok = 1 # Sinaliza para execução, que não passou
+                            self.operacao._visualiza_iso_d = True
 
                         # Se teste de condutividade e de isolação passaram
                         if cond == True and iso ==  True:
@@ -302,7 +306,7 @@ class TelaExecucao(QDialog):
     def thread_atualizar_valor(self, data_hora):
         self.ui.lbDataHora.setText(self._translate("TelaExecucao", f"<html><head/><body><p align=\"center\">{data_hora}</p></body></html>"))
 
-        # if self.execucao_habilita_desabilita == True :
+        # if self.execucao_habilita_desabilita == True  and self._nao_passsou_peca == False:
         if self.execucao_habilita_desabilita == True and  self.io.io_rpi.bot_acio_e == 0 and self.io.io_rpi.bot_acio_d == 0 and self._nao_passsou_peca == False:
             while(self.io.io_rpi.bot_acio_e == 0 or self.io.io_rpi.bot_acio_d == 0):
                 pass
@@ -313,9 +317,7 @@ class TelaExecucao(QDialog):
 
             if self._cnt_acionamento_botao < 1:
                 # time.sleep(0.1)
-                # Reseta erros que estão em rotina
                 self.rotina.flag_erro_geral = False
-
                 self._nao_passsou_peca = False
                 self.em_execucao = True
                 self.tempo_ciclo = 0
@@ -394,7 +396,7 @@ class TelaExecucao(QDialog):
                         self.ui.lbAvisos.setStyleSheet(f"background-color: rgb({self.VERMELHO});")
                     else:
                         self.ui.lbAvisos.setText(self._translate("TelaExecucao", f"<html><head/><body><p align=\"center\">Não há erros de condutividade nessa peça</p></body></html>"))
-                        self.ui.lbAvisos.setStyleSheet(f"background-color: rgb({self.VERMELHO});")
+                        self.ui.lbAvisos.setStyleSheet(f"background-color: rgb({self.VERDE});")
 
 
                 if self._visualiza_condu_d == True:
@@ -409,7 +411,7 @@ class TelaExecucao(QDialog):
                         self.ui.lbAvisos.setStyleSheet(f"background-color: rgb({self.VERMELHO});")
                     else:
                         self.ui.lbAvisos.setText(self._translate("TelaExecucao", f"<html><head/><body><p align=\"center\">Não há erros de condutividade nessa peça</p></body></html>"))
-                        self.ui.lbAvisos.setStyleSheet(f"background-color: rgb({self.VERMELHO});")
+                        self.ui.lbAvisos.setStyleSheet(f"background-color: rgb({self.VERDE});")
 
                 if self._visualiza_iso_e == True:
                     if self._cnt_pagina_erro > len(self.iso_e)-1:
@@ -893,7 +895,6 @@ class TelaExecucao(QDialog):
         self.ui.lbAvisos.setStyleSheet(f"background-color: rgb({self.VERDE});")
         self._cnt_acionamento_botao=0
 
-
     def para_execucao(self):
         self.msg_box.exec(msg="Deseja realmente encerar rotina?")
         if self.msg_box.yes_no == True:
@@ -1024,10 +1025,8 @@ class TelaExecucao(QDialog):
             self._visualiza_condu_d = False
             self._visualiza_iso_e = False
             self._visualiza_iso_d = False
-            self.ui.lbContinuIndicaE.setStyleSheet(f"background-color: rgb({self.VERMELHO});")
-            self.ui.lbContinuIndicaD.setStyleSheet(f"background-color: rgb({self.CINZA});")
-            self.ui.lbIsolaIndicaE.setStyleSheet(f"background-color: rgb({self.CINZA});")
-            self.ui.lbIsolaIndicaD.setStyleSheet(f"background-color: rgb({self.CINZA});")
+            self.selecao_visualisacao()
+
 
     def select_visu_iso_e(self, event):
         if self.habili_desbilita_esquerdo == True and self._nao_passsou_peca == True:
@@ -1035,10 +1034,7 @@ class TelaExecucao(QDialog):
             self._visualiza_condu_d = False
             self._visualiza_iso_e = True
             self._visualiza_iso_d = False
-            self.ui.lbContinuIndicaE.setStyleSheet(f"background-color: rgb({self.CINZA});")
-            self.ui.lbContinuIndicaD.setStyleSheet(f"background-color: rgb({self.CINZA});")
-            self.ui.lbIsolaIndicaE.setStyleSheet(f"background-color: rgb({self.VERMELHO});")
-            self.ui.lbIsolaIndicaD.setStyleSheet(f"background-color: rgb({self.CINZA});")
+            self.selecao_visualisacao()
 
     def select_visu_cond_d(self, event):
         if self.habili_desbilita_direito == True and self._nao_passsou_peca == True:
@@ -1046,10 +1042,7 @@ class TelaExecucao(QDialog):
             self._visualiza_condu_d = True
             self._visualiza_iso_e = False
             self._visualiza_iso_d = False
-            self.ui.lbContinuIndicaE.setStyleSheet(f"background-color: rgb({self.CINZA});")
-            self.ui.lbContinuIndicaD.setStyleSheet(f"background-color: rgb({self.VERMELHO});")
-            self.ui.lbIsolaIndicaE.setStyleSheet(f"background-color: rgb({self.CINZA});")
-            self.ui.lbIsolaIndicaD.setStyleSheet(f"background-color: rgb({self.CINZA});")
+            self.selecao_visualisacao()
 
     def select_visu_iso_d(self, event):
         if self.habili_desbilita_direito == True and self._nao_passsou_peca == True:
@@ -1057,9 +1050,26 @@ class TelaExecucao(QDialog):
             self._visualiza_condu_d = False
             self._visualiza_iso_e = False
             self._visualiza_iso_d = True
-            self.ui.lbContinuIndicaE.setStyleSheet(f"background-color: rgb({self.CINZA});")
-            self.ui.lbContinuIndicaD.setStyleSheet(f"background-color: rgb({self.CINZA});")
-            self.ui.lbIsolaIndicaE.setStyleSheet(f"background-color: rgb({self.CINZA});")
+            self.selecao_visualisacao()
+    def selecao_visualisacao(self):
+        if self.esquerda_condu_ok == 2: # Se condutividade está ok
+            self.ui.lbContinuIndicaE.setStyleSheet(f"background-color: rgb({self.VERDE});")
+        elif self.esquerda_condu_ok == 1: # Se condutividade não está ok
+            self.ui.lbContinuIndicaE.setStyleSheet(f"background-color: rgb({self.VERMELHO});")
+
+        if self.direita_condu_ok == 2: # Se condutividade está ok
+            self.ui.lbContinuIndicaD.setStyleSheet(f"background-color: rgb({self.VERDE});")
+        elif self.direita_condu_ok == 1: # Se condutividade não está ok
+            self.ui.lbContinuIndicaD.setStyleSheet(f"background-color: rgb({self.VERMELHO});")
+
+        if self.esquerda_iso_ok == 2: # Se isolação estiver ok
+            self.ui.lbIsolaIndicaE.setStyleSheet(f"background-color: rgb({self.VERDE});")
+        elif self.esquerda_iso_ok == 1: # Se isolação não estiver ok
+            self.ui.lbIsolaIndicaE.setStyleSheet(f"background-color: rgb({self.VERMELHO});")
+                
+        if self.direita_iso_ok == 2: # Se isolação está ok
+            self.ui.lbIsolaIndicaD.setStyleSheet(f"background-color: rgb({self.VERDE});")
+        elif self.direita_iso_ok == 1: # Se isolação não estiver ok
             self.ui.lbIsolaIndicaD.setStyleSheet(f"background-color: rgb({self.VERMELHO});")
 
     def _desabilita_botoes(self, hab_dasab):
