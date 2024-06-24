@@ -33,6 +33,12 @@ class Ui_TelaInicial(object):
 "border-image: url(:/logo/logo_qualifix.JPG);")
         self.lbLogo.setText("")
         self.lbLogo.setObjectName("lbLogo")
+        self.btDesligarSistema = QtWidgets.QPushButton(TelaInicial)
+        self.btDesligarSistema.setGeometry(QtCore.QRect(380, 630, 260, 102))
+        font = QtGui.QFont()
+        font.setPointSize(20)
+        self.btDesligarSistema.setFont(font)
+        self.btDesligarSistema.setObjectName("btDesligarSistema")
 
         self.retranslateUi(TelaInicial)
         QtCore.QMetaObject.connectSlotsByName(TelaInicial)
@@ -42,7 +48,7 @@ class Ui_TelaInicial(object):
         TelaInicial.setWindowTitle(_translate("TelaInicial", "Form"))
         self.btIniciar.setText(_translate("TelaInicial", "INICIAR"))
         self.btConfigurar.setText(_translate("TelaInicial", "CONFIGURAR"))
-
+        self.btDesligarSistema.setText(_translate("TelaInicial", "DESLIGAR SISTEMA"))
 
 
 if __name__ == "__main__":

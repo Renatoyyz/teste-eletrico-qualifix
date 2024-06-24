@@ -123,7 +123,7 @@ class RotinaPrg(threading.Thread):
             "ligacao16":[0,0,"",0,0],
             "foi_testado": False
         }
-        self.start()
+        # self.start()
 
     def run(self):
         while self._running == True:
@@ -498,7 +498,8 @@ class RotinaPrg(threading.Thread):
                 self.io.wp_8027(self.io.ADR_4,1,0)
 
                 # Sobe pistão - Liga válvula
-                self.io.wp_8027(self.io.ADR_3, 5, 1) 
+                # self.io.wp_8027(self.io.ADR_3, 5, 1) 
+                self.sobe_pistao()
                 #Aguarda pistão subir
                 if self.sleep_check_erro(self.TEMPO_SUBIDA_PISTAO) == False: 
                     # Sobe pistão - Desliga válvula

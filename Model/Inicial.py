@@ -1,5 +1,7 @@
 from PyQt5.QtWidgets import QApplication, QMainWindow
 from PyQt5.QtCore import Qt
+import os
+import time
 
 from View.tela_inicial import Ui_TelaInicial
 
@@ -34,6 +36,7 @@ class TelaInicial(QMainWindow):
         self.mouseReleaseEvent = self.setfoccus
         self.ui.btConfigurar.clicked.connect(self.tela_configurar)
         self.ui.btIniciar.clicked.connect(self.tela_execucao)
+        self.ui.btDesligarSistema.clicked.connect(self.desligar_sistema)
 
     def move_to_corner(self):
         # Obter a geometria do monitor primário
@@ -55,6 +58,15 @@ class TelaInicial(QMainWindow):
         execucao = TelaLogin(dado=self.dado, io=self.io, target=self.dado.TELA_EXECUCAO, db=self.database, rotina=self.rotina)
         execucao.setModal(True)
         execucao.exec_()
+    
+    def desligar_sistema(self):
+        self.shutdown_pi()
+        self.close()
+
+    def shutdown_pi(self):
+        print("Desligando o Raspberry Pi com segurança...")
+        time.sleep(10)  # Espera 10 segundos antes de iniciar o processo de desligamento
+        os.system("sudo shutdown now")
 
 
     def closeEvent(self, event):

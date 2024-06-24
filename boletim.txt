@@ -4,3 +4,16 @@ agora tem que começar a tratar erros de porta, cortina de luz
 Na linha 412, 444 e 461 de ExecucaoPrograma.py escrever código para acender luz verde da torre
 Na linha 438, 455 e 471 de ExecucaoPrograma.py escrever código para acender luz vermelha da torre
 Na linha 240 de ExecucaoPrograma.py escrever código para apagar luz verde e vermelha da torre
+
+Inicial.py
+Linha 64 mudar botao para 0
+
+IOs.py
+Linha 153 mudar porta serial
+Linha 126 KakeModbus para False
+
+Dados.py
+Linha 23 mudar full_screem para True
+
+ExecucaoPrograma.py 
+Linha 305 mudar para botoes

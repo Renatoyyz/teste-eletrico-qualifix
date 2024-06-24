@@ -66,6 +66,24 @@ border-image: url(:/logo/logo_qualifix.JPG);</string>
     <string/>
    </property>
   </widget>
+  <widget class="QPushButton" name="btDesligarSistema">
+   <property name="geometry">
+    <rect>
+     <x>380</x>
+     <y>630</y>
+     <width>260</width>
+     <height>102</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>20</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>DESLIGAR SISTEMA</string>
+   </property>
+  </widget>
  </widget>
  <resources>
   <include location="../img/logo_qualifix.qrc"/>
