@@ -18,4 +18,4 @@ if __name__ == "__main__":
 
     window = TelaInicial(io=io, dado=dado, db=db, rotina=rotina)
     window.show()
-    sys.exit([app.exec(),db.stop(),rotina.stop()])
+    sys.exit([app.exec(),db.stop()])

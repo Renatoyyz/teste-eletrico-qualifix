@@ -25,9 +25,8 @@ import time
         |   |________________________Pino da tomada dos conectores
         |____________________________Número da conexão
 """
-class RotinaPrg(threading.Thread):
+class RotinaPrg:
     def __init__(self, dado=None, io=None, db=None):
-        threading.Thread.__init__(self)
 
         self.TEMPO_DESCIDA_PISTAO = 2000
         self.TEMPO_SUBIDA_PISTAO = 2000
@@ -51,10 +50,6 @@ class RotinaPrg(threading.Thread):
         self.flag_erro_pistao = False # Para indicar se pistão está na posição certa
         self.flag_erro_geral = False
         #************************************************************************************
-
-        self._running = True
-        self._habilita_teste_esquerdo_condutividade = False
-        self._habilita_teste_direito_condutividade = False
 
         self.nome_programa = ""
         self.url_img_esquerdo = ""
@@ -123,22 +118,6 @@ class RotinaPrg(threading.Thread):
             "ligacao16":[0,0,"",0,0],
             "foi_testado": False
         }
-        # self.start()
-
-    def run(self):
-        while self._running == True:
-            if self._habilita_teste_esquerdo_condutividade == True:
-                self.teste_esquerdo_direito_condutividade(0)# Executa teste do lado esquerdo
-                self._habilita_teste_esquerdo_condutividade = False
-            elif self._habilita_teste_direito_condutividade == True:
-                self.teste_esquerdo_direito_condutividade(1)# Executa teste do lado direito
-                self._habilita_teste_direito_condutividade = False
-            time.sleep(0.1)
-
-    def stop(self):
-        self._running=False
-        self.join()
-        return 0
 
     def clear_dados_esquerdo(self):
         self.url_img_esquerdo=""
