@@ -1,7 +1,5 @@
 import time
-import threading
 import serial
-import sys
 
 class FakeRPiGPIO:
     BCM = "BCM"
@@ -108,11 +106,9 @@ class InOut:
             
     
     
-class IO_MODBUS(threading.Thread):
+class IO_MODBUS:
     def __init__(self):
-        threading.Thread.__init__(self)
 
-        self._running = True
         self.io_rpi = InOut()
         self.ADR_1 = 1 # Endereço do WP8027 dos relés do lado esquerdo - 16 saídas
         self.ADR_2 = 2 # Endereço do WP8027 dos relés do lado direito - 16 saídas
@@ -124,6 +120,7 @@ class IO_MODBUS(threading.Thread):
         self.valor_saida_geral = 0
 
         self.fake_modbus = False
+        self.cnt_serial = 0
 
         self.entradas_wp8026 = {
             "in_1": 0,
@@ -160,8 +157,6 @@ class IO_MODBUS(threading.Thread):
                                     #xonxoff=False,         # Controle de fluxo por software (XON/XOFF)
                                     #rtscts=True
                                 )
-        
-        # self.start()
 
     def aciona_saida(self,adr,out,on_off):
         self.habilita_saida = True
@@ -183,7 +178,7 @@ class IO_MODBUS(threading.Thread):
 
     def wp_8027(self, adr, out, on_off):
         if self.fake_modbus == False:
-           return self.wp_8027_(adr=adr, out=out,on_off=on_off)
+            return self.wp_8027_(adr=adr, out=out,on_off=on_off)
         else:
             return -1
     def wp_8027_(self, adr, out, on_off):
@@ -269,32 +264,50 @@ class IO_MODBUS(threading.Thread):
         parte_superior = (crc_result >> 8) & 0xFF  # Desloca 8 bits para a direita e aplica a máscara 0xFF
         parte_inferior = crc_result & 0xFF        # Aplica a máscara 0xFF diretamente
 
-        # Repete-se os comandos em decimal com os devidos bytes de CRC
-        # self._serial.flush()
-        self.ser.write([adr,0x0f,0,0,0,16,2,out_val_l,out_val_h,parte_inferior,parte_superior])
-        while self.ser.readable()==False:
-            pass
-        dados_recebidos = self.ser.read(8)
         try:
-            dados_recebidos = dados_recebidos.hex()
-            hex_text = dados_recebidos[0:2]+dados_recebidos[2:4]+dados_recebidos[4:6]+dados_recebidos[6:8]+dados_recebidos[8:10]+dados_recebidos[10:12]
-            bytes_hex = bytes.fromhex(hex_text) # Transforma em hexa
-            crc_result = self.crc16_modbus(bytes_hex) # Retorna o CRC
+            # Repete-se os comandos em decimal com os devidos bytes de CRC
+            self.ser.write([adr,0x0f,0,0,0,16,2,out_val_l,out_val_h,parte_inferior,parte_superior])
+            # self.ser.flush()
+            start_time = time.time()
 
-            parte_superior = (crc_result >> 8) & 0xFF  # Desloca 8 bits para a direita e aplica a máscara 0xFF
-            parte_inferior = crc_result & 0xFF        # Aplica a máscara 0xFF diretamente
+            while not self.ser.readable():
+                if time.time() - start_time > self.ser.timeout:
+                    print("Timeout: Nenhuma resposta do escravo.")
+                    break
+                time.sleep(0.1)  # Aguarde um curto período antes de verificar novamente
 
-            superior_crc = int(dados_recebidos[14:16],16) # Transforma de hexa para int
-            inferior_crc = int(dados_recebidos[12:14],16) # Transforma de hexa para int
+            dados_recebidos = self.ser.read(8)
+            self.ser.flushInput()  # Limpa o buffer de entrada após a leitura
+            if dados_recebidos != b'':
+                dados_recebidos = dados_recebidos.hex()
+                hex_text = dados_recebidos[0:2]+dados_recebidos[2:4]+dados_recebidos[4:6]+dados_recebidos[6:8]+dados_recebidos[8:10]+dados_recebidos[10:12]
+                bytes_hex = bytes.fromhex(hex_text) # Transforma em hexa
+                crc_result = self.crc16_modbus(bytes_hex) # Retorna o CRC
 
-            if parte_superior == superior_crc and parte_inferior == inferior_crc:
-                dados_recebidos = dados_recebidos[14:16]
-                dados_recebidos = int(dados_recebidos,16)
-                # time.sleep(0.1)
-                return dados_recebidos
+                parte_superior = (crc_result >> 8) & 0xFF  # Desloca 8 bits para a direita e aplica a máscara 0xFF
+                parte_inferior = crc_result & 0xFF        # Aplica a máscara 0xFF diretamente
+
+                superior_crc = int(dados_recebidos[14:16],16) # Transforma de hexa para int
+                inferior_crc = int(dados_recebidos[12:14],16) # Transforma de hexa para int
+
+                if parte_superior == superior_crc and parte_inferior == inferior_crc:
+                    dados_recebidos = dados_recebidos[14:16]
+                    dados_recebidos = int(dados_recebidos,16)
+                    # time.sleep(0.1)
+                    self.cnt_serial = 0
+                    return dados_recebidos
+                else:
+                    self.cnt_serial = 0
+                    return -1
             else:
-                return -1
-        except:
+                self.cnt_serial+=1
+                # return -1
+            if self.cnt_serial > 3:
+                self.cnt_serial = 0
+                self.reset_serial()
+            return -1
+        except Exception as e:
+            print(f"Erro de comunicação: {e}")
             return -1 # Indica erro de alguma natureza....
         
     def wp_8026(self, adr, input):
@@ -318,51 +331,75 @@ class IO_MODBUS(threading.Thread):
             parte_superior = (crc_result >> 8) & 0xFF  # Desloca 8 bits para a direita e aplica a máscara 0xFF
             parte_inferior = crc_result & 0xFF        # Aplica a máscara 0xFF diretamente
 
-            # Repete-se os comandos em decimal com os devidos bytes de CRC
-            # self._serial.flush()
-            self.ser.write([adr,2,0,0,0,16,parte_inferior, parte_superior])
-            while self.ser.readable()==False:
-                pass
-            dados_recebidos = self.ser.read(7)
-
             try:
-                dados_recebidos = dados_recebidos.hex()
-                hex_text = dados_recebidos[0:2]+dados_recebidos[2:4]+dados_recebidos[4:6]+dados_recebidos[6:8]+dados_recebidos[8:10]
-                bytes_hex = bytes.fromhex(hex_text) # Transforma em hexa
-                crc_result = self.crc16_modbus(bytes_hex) # Retorna o CRC
+                # Repete-se os comandos em decimal com os devidos bytes de CRC
+                self.ser.write([adr,2,0,0,0,16,parte_inferior, parte_superior])
+                # self.ser.flush()
+                start_time = time.time()
+                while not self.ser.readable():
+                    if time.time() - start_time > self.ser.timeout:
+                        print("Timeout: Nenhuma resposta do escravo.")
+                        return -1
+                    time.sleep(0.1)  # Aguarde um curto período antes de verificar novamente
+                dados_recebidos = self.ser.read(7)
+                self.ser.flushInput()  # Limpa o buffer de entrada após a leitura
+                if dados_recebidos != b'':
+                    dados_recebidos = dados_recebidos.hex()
+                    hex_text = dados_recebidos[0:2]+dados_recebidos[2:4]+dados_recebidos[4:6]+dados_recebidos[6:8]+dados_recebidos[8:10]
+                    bytes_hex = bytes.fromhex(hex_text) # Transforma em hexa
+                    crc_result = self.crc16_modbus(bytes_hex) # Retorna o CRC
 
-                parte_superior = (crc_result >> 8) & 0xFF  # Desloca 8 bits para a direita e aplica a máscara 0xFF
-                parte_inferior = crc_result & 0xFF        # Aplica a máscara 0xFF diretamente
+                    parte_superior = (crc_result >> 8) & 0xFF  # Desloca 8 bits para a direita e aplica a máscara 0xFF
+                    parte_inferior = crc_result & 0xFF        # Aplica a máscara 0xFF diretamente
 
-                superior_crc = int(dados_recebidos[12:14],16) # Transforma de hexa para int
-                inferior_crc = int(dados_recebidos[10:12],16) # Transforma de hexa para int
+                    superior_crc = int(dados_recebidos[12:14],16) # Transforma de hexa para int
+                    inferior_crc = int(dados_recebidos[10:12],16) # Transforma de hexa para int
 
-                if parte_superior == superior_crc and parte_inferior == inferior_crc:
-                    dados_recebidos = dados_recebidos[6:10]
-                    dados_recebidos = int(dados_recebidos, 16)
-                    # Separando em duas partes (0x01 e 0x00)
-                    hex_part1 = dados_recebidos >> 8  # Primeiros 8 bits
-                    hex_part2 = dados_recebidos & 0xFF  # Últimos 8 bits
-                    result=0
-                    if input < 9:
-                        test = 0x01*( pow(2,input-1) )
-                        result = ( (hex_part1 & (test))  )
-                        result = result>>(input-1)
-                        # if result > 2:
-                        #     result=1
+                    if parte_superior == superior_crc and parte_inferior == inferior_crc:
+                        dados_recebidos = dados_recebidos[6:10]
+                        dados_recebidos = int(dados_recebidos, 16)
+                        # Separando em duas partes (0x01 e 0x00)
+                        hex_part1 = dados_recebidos >> 8  # Primeiros 8 bits
+                        hex_part2 = dados_recebidos & 0xFF  # Últimos 8 bits
+                        result=0
+                        if input < 9:
+                            test = 0x01*( pow(2,input-1) )
+                            result = ( (hex_part1 & (test))  )
+                            result = result>>(input-1)
+                            # if result > 2:
+                            #     result=1
+                        else:
+                            test = 0x01*( pow(2,(input-8)-1) )
+                            result = ( (hex_part2 & (test))  )
+                            result = result>>((input-8)-1)
+
+                        return result
                     else:
-                        test = 0x01*( pow(2,(input-8)-1) )
-                        result = ( (hex_part2 & (test))  )
-                        result = result>>((input-8)-1)
-
-                    return result
+                        return -1
                 else:
-                    return -1
+                    self.cnt_serial+=1
+                    # return -1
+                if self.cnt_serial > 3:
+                    self.cnt_serial = 0
+                    self.reset_serial()
+                return -1
+                
             except:
+                print("Erro de comunicação")
                 return -1 # Indica erro de alguma natureza....
 
 
         return 0
+    
+    def reset_serial(self):
+        try:
+            self.ser.close()
+            time.sleep(0.5)  # Aguarda um curto período antes de reabrir a porta
+            self.ser.open()
+            self.ser.flushInput()  # Limpa o buffer de entrada após reabrir a porta
+            print("Porta serial resetada com sucesso.")
+        except Exception as e:
+            print(f"Erro ao resetar a porta serial: {e}")
 
     def retorna_bit_desligar_0_8(self, adr, bit):
         out_loc = 0
@@ -422,26 +459,7 @@ class IO_MODBUS(threading.Thread):
             out_loc = ( (1 << (bit-1-8)) | (mask) ) & 0xFF7F
 
         return out_loc 
-        
-    def run(self):
-        while self._running == True:
-            if self.habilita_saida == True:
-                self.habilita_saida=False
-                self.wp_8027(self.adr,self.saida,self.on_off)
-            # for i in range(1,17):
-            self.entradas_wp8026[f"in_{self.cnt_entradas}"] = self.wp_8026(self.ADR_4,self.cnt_entradas)
-            self.cnt_entradas+=1
-            if self.cnt_entradas > 16:
-                self.cnt_entradas=1
-                # time.sleep(0.5)
-            # time.sleep(0.2)
-        self.ser.close()
 
-
-    def stop(self):
-        self._running = False
-        self.join()    
-        return 0
 
 if __name__ == '__main__':
     io = IO_MODBUS()

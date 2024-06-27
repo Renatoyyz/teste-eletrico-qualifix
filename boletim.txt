@@ -6,14 +6,19 @@ Na linha 438, 455 e 471 de ExecucaoPrograma.py escrever código para acender luz
 Na linha 240 de ExecucaoPrograma.py escrever código para apagar luz verde e vermelha da torre
 
 Inicial.py
-Linha 64 mudar botao para 0
+Linha 76 mudar botao para 0
 
 IOs.py
 Linha 153 mudar porta serial
-Linha 126 KakeModbus para False
+Linha 122 KakeModbus para False
 
 Dados.py
 Linha 23 mudar full_screem para True
 
 ExecucaoPrograma.py 
 Linha 305 mudar para botoes
+
+ExecucaoPrograma
+698 self.salva_rotina()# Atualiza dados no banco de dados
+901 self.salva_rotina(finalizado=True)
+1014 self.salva_rotina()

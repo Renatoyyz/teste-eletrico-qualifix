@@ -417,7 +417,6 @@ class TelaReceitaDireita(QDialog):
 # 
 #*****************************************************************************************************************************
     def testa_conexao(self):
-        # self.rotina._habilita_teste_esquerdo_condutividade = True
         self.ui.txaInformacoes.setText(self.MSG_INFO_TESTANDO)
         result = self.rotina.teste_esquerdo_direito_condutividade(1)# 1 indica teste do lado direito
         check = False
