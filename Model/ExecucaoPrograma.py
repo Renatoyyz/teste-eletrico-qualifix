@@ -1,41 +1,129 @@
-from PyQt5.QtGui import QCloseEvent
 from PyQt5.QtWidgets import QDialog, QApplication
-from PyQt5.QtCore import Qt, QCoreApplication, QObject, pyqtSignal, QThread
+from PyQt5.QtCore import Qt, QCoreApplication, QObject, pyqtSignal, QThread, QTimer
 import time
 from datetime import datetime
-from typing import Any
 
 from Controller.Message import MessageBox, SimpleMessageBox
 
 from Controller.OpenFile import OpenFile
 from View.tela_execucao_programa import Ui_TelaExecucao
 
+from datetime import datetime
+
 class Atualizador(QObject):
-    sinal_atualizar = pyqtSignal(str)# Inicializa com a quantidade de variáveis que se deseja
+    sinal_atualizar = pyqtSignal(str)
 
     def __init__(self, operacao):
         super().__init__()
         self.operacao = operacao
         self._running = True
-        self._ofset_temo = 0
+        self._timer = QTimer(self)
+        self._timer.timeout.connect(self.atualizar_valor)
+        self._timer.start(500)  # Atualiza a cada 0.5 segundos
 
-    def thread_atualizar_valor(self):
-        while self._running == True:
-            # Obtém o valor atualizado do dado (ou qualquer outra lógica necessária)
-            # Obtém a data e hora atuais
-            data_hora = datetime.now()
-            data_formatada = data_hora.strftime("%d/%m/%Y %H:%M:%S")
-            # print(valor_atualizado)
+    def atualizar_valor(self):
+        if not self._running:
+            self._timer.stop()
+            return
 
-            # Emite o sinal para atualizar a interface do usuário
-            self.sinal_atualizar.emit(data_formatada)
-
-            # Aguarda 1 segundo antes de atualizar novamente
-            QApplication.processEvents()
-            time.sleep(0.5)
+        data_hora = datetime.now()
+        data_formatada = data_hora.strftime("%d/%m/%Y %H:%M:%S")
+        self.sinal_atualizar.emit(data_formatada)
 
     def parar(self):
         self._running = False
+
+
+class ExecutaRotinaThread(QObject):
+    sinal_execucao = pyqtSignal(list, list, list, list)
+
+    def __init__(self, operacao):
+        super().__init__()
+        self.operacao = operacao
+        self._running = True
+        self._timer = QTimer(self)
+        self._timer.timeout.connect(self.atualizar_execucao)
+        self._timer.start(500)  # Atualiza a cada 0.5 segundos
+        self.esquerda_ok = False
+        self.direita_ok = False
+
+    def atualizar_execucao(self):
+        if not self._running:
+            self._timer.stop()
+            return
+
+        result_condu_e = []
+        result_condu_d = []
+        result_iso_e = []
+        result_iso_d = []
+
+        if self.operacao.em_execucao:
+            self.operacao.rotina.limpa_saidas_esquerda_direita()
+            if self.operacao.rotina.abaixa_pistao():
+                if self.operacao.habili_desbilita_esquerdo:
+                    result_condu_e, result_iso_e = self.realiza_testes_esquerdo()
+                if self.operacao.habili_desbilita_direito:
+                    result_condu_d, result_iso_d = self.realiza_testes_direito()
+
+            if self.esquerda_ok and self.direita_ok:
+                self.operacao.rotina.acende_verde()
+                self.operacao.rotina.sobe_pistao()
+            else:
+                self.operacao.rotina.acende_vermelho()
+
+            self.resetar_interface()
+            self.sinal_execucao.emit(result_condu_e, result_iso_e, result_condu_d, result_iso_d)
+
+    def realiza_testes_esquerdo(self):
+        self.operacao.qual_teste = self.operacao.TESTE_COND_E
+        result_condu_e = self.operacao.rotina.esquerdo_direito_condutividade(0)
+        self.operacao.qual_teste = self.operacao.TESTE_ISO_E
+        result_iso_e = self.operacao.rotina.esquerdo_direito_isolacao(0)
+
+        cond = all(c[2] != 0 for c in result_condu_e)
+        iso = all(i[2] != 1 for i in result_iso_e)
+        
+        self.operacao.esquerda_condu_ok = 2 if cond else 1
+        self.operacao.esquerda_iso_ok = 2 if iso else 1
+        self.operacao._visualiza_condu_e = not cond
+        self.operacao._visualiza_iso_e = not iso
+
+        self.esquerda_ok = cond and iso
+
+        self.operacao._carrega_eletrodos(self.operacao.rotina.coord_eletrodo_esquerdo, "E")
+
+        return result_condu_e, result_iso_e
+
+    def realiza_testes_direito(self):
+        self.operacao.qual_teste = self.operacao.TESTE_COND_D
+        result_condu_d = self.operacao.rotina.esquerdo_direito_condutividade(1)
+        self.operacao.qual_teste = self.operacao.TESTE_ISO_D
+        result_iso_d = self.operacao.rotina.esquerdo_direito_isolacao(1)
+
+        cond = all(c[2] != 0 for c in result_condu_d)
+        iso = all(i[2] != 1 for i in result_iso_d)
+        
+        self.operacao.direita_condu_ok = 2 if cond else 1
+        self.operacao.direita_iso_ok = 2 if iso else 1
+        self.operacao._visualiza_condu_d = not cond
+        self.operacao._visualiza_iso_d = not iso
+
+        self.direita_ok = cond and iso
+
+        self.operacao._carrega_eletrodos(self.operacao.rotina.coord_eletrodo_direito, "D")
+
+        return result_condu_d, result_iso_d
+
+    def resetar_interface(self):
+        self.operacao.qual_teste = self.operacao.SEM_TESTE
+        self.operacao.indica_cor_teste_condu("lbContinuIndicaE", self.operacao.CINZA, 0)
+        self.operacao.indica_cor_teste_condu("lbContinuIndicaD", self.operacao.CINZA, 1)
+        self.operacao.indica_cor_teste_iso("lbIsolaIndicaE", self.operacao.CINZA, 0)
+        self.operacao.indica_cor_teste_iso("lbIsolaIndicaD", self.operacao.CINZA, 1)
+
+    def parar(self):
+        self._running = False
+
 
 class ExecutaRotinaThread(QObject):
     sinal_execucao = pyqtSignal(list,list,list,list)# Inicializa com a quantidade de variáveis que se deseja
@@ -156,22 +244,31 @@ class ExecutaRotinaThread(QObject):
         self._running = False
 
 class TelaExecucao(QDialog):
-    def __init__(self,  dado=None, io=None, db=None, rotina=None, nome_prog = None, continuacao = None, db_rotina = None):
+    def __init__(self, dado=None, io=None, db=None, rotina=None, nome_prog=None, continuacao=None, db_rotina=None):
         super().__init__()
 
+        self.inicializa_variaveis(dado, io, db, rotina, nome_prog, continuacao, db_rotina)
+        self.inicializa_estados()
+        self.inicializa_cores()
+        self.inicializa_contadores()
+        self.inicializa_testes()
+        self.inicializa_ui()
+        self.inicializa_conexoes()
+        self.carregar_configuracoes()
+        self.inicializa_threads()
+
+    def inicializa_variaveis(self, dado, io, db, rotina, nome_prog, continuacao, db_rotina):
         self.dado = dado
         self.io = io
         self.database = db
         self.rotina = rotina
         self.nome_prog = nome_prog
-        self.id = 0
         self.continuacao = continuacao
         self.db_rotina = db_rotina
-
         self.tempo_ciclo = 0
-
         self._translate = QCoreApplication.translate
 
+    def inicializa_estados(self):
         self.habili_desbilita_esquerdo = True
         self.habili_desbilita_direito = True
         self.habili_desbilita_esquerdo_old = True
@@ -179,36 +276,19 @@ class TelaExecucao(QDialog):
         self.execucao_habilita_desabilita = False
         self.em_execucao = False
         self._nao_passsou_peca = False
-
-        # Variáveis para armazenar condicão de condutividade e isolação dos lados esquerdo e direito
-        # 0 = indica que não está sendo avaliado
-        # 1 = indica que não passou
-        # 2 = indica que passou
         self.esquerda_condu_ok = 0
         self.esquerda_iso_ok = 0
         self.direita_condu_ok = 0
         self.direita_iso_ok = 0
 
-        # Flags para estado de execução
-        self.SEM_TESTE = 0
-        self.TESTE_COND_E = 1
-        self.TESTE_COND_D = 2
-        self.TESTE_ISO_E = 3
-        self.TESTE_ISO_D = 4
-
-        # Cores para indicações
-        # background-color: rgb(170, 255, 127);
-        # background-color: rgb(171, 171, 171);
-        # background-color: rgb(170, 0, 0);
+    def inicializa_cores(self):
         self.VERDE = "170, 255, 127"
         self.CINZA = "171, 171, 171"
         self.VERMELHO = "255, 0, 0"
         self.AZUL = "0,255,255"
         self.LILAZ = "192, 82, 206"
 
-        self.qual_teste = self.SEM_TESTE
-        self._ofset_temo = 0
-
+    def inicializa_contadores(self):
         self._cnt_ciclos = 1
         self._cnt_peca_passou_e = 0
         self._cnt_peca_passou_d = 0
@@ -216,43 +296,40 @@ class TelaExecucao(QDialog):
         self._cnt_peca_reprovou_d = 0
         self._cnt_peca_retrabalho_e = 0
         self._cnt_peca_retrabalho_d = 0
+        self._cnt_pagina_erro = 0
+        self._cnt_acionamento_botao = 0
 
-        # Variáveis que armazena estado dos testes
+    def inicializa_testes(self):
+        self.SEM_TESTE = 0
+        self.TESTE_COND_E = 1
+        self.TESTE_COND_D = 2
+        self.TESTE_ISO_E = 3
+        self.TESTE_ISO_D = 4
+        self.qual_teste = self.SEM_TESTE
+        self._ofset_temo = 0
+        self._retrabalho = False
+        self.rotina_iniciada = False
+        self._nome_rotina_execucao = ""
+        self._visualiza_condu_e = False
+        self._visualiza_condu_d = False
+        self._visualiza_iso_e = False
+        self._visualiza_iso_d = False
+        self.oscila_cor = False
         self.cond_e = []
         self.iso_e = []
         self.cond_d = []
         self.iso_d = []
 
-        #Usado para mostrar cada erro a medida que toca na imagem
-        self._cnt_pagina_erro = 0
-
-        self._cnt_acionamento_botao = 0# Para garantir que não se acione o botão mais que uma vez
-
-        self._retrabalho = False
-        self.rotina_iniciada = False
-        self._nome_rotina_execucao = ""
-
-        self._visualiza_condu_e = False
-        self._visualiza_condu_d = False
-        self._visualiza_iso_e = False
-        self._visualiza_iso_d = False
-
-        self.oscila_cor = False
-
+    def inicializa_ui(self):
         self.msg = SimpleMessageBox()
         self.msg_box = MessageBox()
-
-        # Configuração da interface do usuário gerada pelo Qt Designer
         self.ui = Ui_TelaExecucao()
         self.ui.setupUi(self)
-
-        # Remover a barra de título e ocultar os botões de maximizar e minimizar
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.WindowState.WindowMaximized)
-        # Maximizar a janela
-        # self.showMaximized()
-        if self.dado.full_scream == True:
+        if self.dado.full_scream:
             self.setWindowState(Qt.WindowState.WindowFullScreen)
 
+    def inicializa_conexoes(self):
         self.ui.btVoltar.clicked.connect(self.voltar)
         self.ui.btDesHabEsquerdo.clicked.connect(self.desabilita_esquerdo)
         self.ui.btDesHabDireito.clicked.connect(self.desabilita_direito)
@@ -261,7 +338,6 @@ class TelaExecucao(QDialog):
         self.ui.btFinalizar.clicked.connect(self.para_execucao)
         self.ui.btRetrabalhar.clicked.connect(self.botao_retrabalho)
         self.ui.btDescartar.clicked.connect(self.botao_descarte)
-
         self.ui.lbImgEsquerdo.mousePressEvent = self.img_esquerda_clicada
         self.ui.lbImgDireito.mousePressEvent = self.img_direita_clicada
         self.ui.lbContinuIndicaE.mousePressEvent = self.select_visu_cond_e
@@ -269,9 +345,10 @@ class TelaExecucao(QDialog):
         self.ui.lbIsolaIndicaE.mousePressEvent = self.select_visu_iso_e
         self.ui.lbIsolaIndicaD.mousePressEvent = self.select_visu_iso_d
 
+    def carregar_configuracoes(self):
         self.load_config()
 
-        # Inicializar o atualizador em uma nova thread
+    def inicializa_threads(self):
         self.atualizador = Atualizador(self)
         self.atualizador.sinal_atualizar.connect(self.thread_atualizar_valor)
         self.atualizador_thread = QThread()
@@ -279,13 +356,13 @@ class TelaExecucao(QDialog):
         self.atualizador_thread.started.connect(self.atualizador.thread_atualizar_valor)
         self.atualizador_thread.start()
 
-        # Inicia Thread de execução de rotina
         self.execucao = ExecutaRotinaThread(self)
         self.execucao.sinal_execucao.connect(self.thread_execucao)
         self.execucao_thread = QThread()
         self.execucao.moveToThread(self.execucao_thread)
         self.execucao_thread.started.connect(self.execucao.atualizar_execucao)
         self.execucao_thread.start()
+
 
     def muda_texto_obj(self, obj_str, text):
         obj_tom_conec = f"{obj_str}"
