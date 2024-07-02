@@ -17,22 +17,22 @@ class Atualizador(QObject):
         super().__init__()
         self.operacao = operacao
         self._running = True
-        self._timer = QTimer(self)
-        self._timer.timeout.connect(self.atualizar_valor)
-        self._timer.start(500)  # Atualiza a cada 0.5 segundos
+        self._ofset_temo = 0
 
-    def atualizar_valor(self):
-        if not self._running:
-            self._timer.stop()
-            return
+    def thread_atualizar_valor(self):
+        while self._running == True:
+            # Obtém o valor atualizado do dado (ou qualquer outra lógica necessária)
+            # Obtém a data e hora atuais
+            data_hora = datetime.now()
+            data_formatada = data_hora.strftime("%d/%m/%Y %H:%M:%S")
+            # print(valor_atualizado)
 
-        data_hora = datetime.now()
-        data_formatada = data_hora.strftime("%d/%m/%Y %H:%M:%S")
-        self.sinal_atualizar.emit(data_formatada)
+            # Emite o sinal para atualizar a interface do usuário
+            self.sinal_atualizar.emit(data_formatada)
 
-        # Aguarda 1 segundo antes de atualizar novamente
-        QApplication.processEvents()
-        self.sleep_ms(0.5)
+            # Aguarda 1 segundo antes de atualizar novamente
+            QApplication.processEvents()
+            self.sleep_ms(0.5)
 
     def parar(self):
         self._running = False
@@ -307,8 +307,8 @@ class TelaExecucao(QDialog):
     def thread_atualizar_valor(self, data_hora):
         self.ui.lbDataHora.setText(self._translate("TelaExecucao", f"<html><head/><body><p align=\"center\">{data_hora}</p></body></html>"))
 
-        # if self.execucao_habilita_desabilita == True  and self._nao_passsou_peca == False:
-        if self.execucao_habilita_desabilita == True and  self.io.io_rpi.bot_acio_e == 0 and self.io.io_rpi.bot_acio_d == 0 and self._nao_passsou_peca == False:
+        if self.execucao_habilita_desabilita == True  and self._nao_passsou_peca == False:
+        # if self.execucao_habilita_desabilita == True and  self.io.io_rpi.bot_acio_e == 0 and self.io.io_rpi.bot_acio_d == 0 and self._nao_passsou_peca == False:
             while(self.io.io_rpi.bot_acio_e == 0 or self.io.io_rpi.bot_acio_d == 0):
                 pass
             # self.rotina.sobe_pistao()
