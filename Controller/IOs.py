@@ -120,7 +120,7 @@ class IO_MODBUS:
         self.valor_saida_esquerdo = 0
         self.valor_saida_geral = 0
 
-        self.fake_modbus = True
+        self.fake_modbus = False
         self.cnt_serial = 0
 
         self.entradas_wp8026 = {
@@ -148,8 +148,8 @@ class IO_MODBUS:
         self.cnt_entradas = 1
 
         self.ser = serial.Serial(
-                                    # port='/dev/ttyUSB0',  # Porta serial padrão no Raspberry Pi 4
-                                    port='/dev/tty.URT0',  # Porta serial padrão no Raspberry Pi 4
+                                    port='/dev/ttyUSB0',  # Porta serial padrão no Raspberry Pi 4
+                                    # port='/dev/tty.URT0',  # Porta serial padrão no Raspberry Pi 4
                                     baudrate=9600,       # Taxa de baud
                                     bytesize=8,
                                     parity="N",
