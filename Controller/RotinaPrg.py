@@ -1,5 +1,6 @@
 import threading
 import time
+from PyQt5.QtCore import QTimer, QEventLoop
 
 # Condutividade
 """
@@ -199,7 +200,7 @@ class RotinaPrg:
     def sleep_check_erro(self, tempo):
         for _ in range(tempo):
             if self.check_flags_erros() == False: #  se não houver erros
-                time.sleep(0.001)
+                self.sleep_ms(0.001)
             else:
                 return True
         return False
@@ -291,7 +292,7 @@ class RotinaPrg:
             self.eletrodo_testando_condu_e[1]=0
             # Depois de conferido a isolação pelo megômetro, reseta relé que liga entrada
             self.io.wp_8027(self.io.ADR_3,8,1)
-            time.sleep(0.2)
+            self.sleep_ms(0.2)
             self.io.wp_8027(self.io.ADR_3,8,0)
             return result
 
@@ -305,7 +306,7 @@ class RotinaPrg:
             self.eletrodo_testando_condu_d[1]=0
             # Depois de conferido a isolação pelo megômetro, reseta relé que liga entrada
             self.io.wp_8027(self.io.ADR_3,8,1)
-            time.sleep(0.2)
+            self.sleep_ms(0.2)
             self.io.wp_8027(self.io.ADR_3,8,0)
             return result
 
@@ -352,7 +353,7 @@ class RotinaPrg:
                     break
             # Depois de conferido a isolação pelo megômetro, reseta relé que liga entrada
             self.io.wp_8027(self.io.ADR_3,8,1)
-            time.sleep(0.2)
+            self.sleep_ms(0.2)
             self.io.wp_8027(self.io.ADR_3,8,0)
         return result
 
@@ -389,7 +390,7 @@ class RotinaPrg:
                     break
             # Depois de conferido a isolação pelo megômetro, reseta relé que liga entrada
             self.io.wp_8027(self.io.ADR_3,8,1)
-            time.sleep(0.2)
+            self.sleep_ms(0.2)
             self.io.wp_8027(self.io.ADR_3,8,0)
 
         return result              
@@ -409,7 +410,7 @@ class RotinaPrg:
 
                 # Garante o Stop do megômetro - pulso
                 self.io.wp_8027(self.io.ADR_3, 7, 1)# liga
-                time.sleep(0.3)
+                self.sleep_ms(0.3)
                 self.io.wp_8027(self.io.ADR_3, 7, 0)# desliga
 
                 # Liga contator que seleciona tensão - ligado seleciona Megômetro
@@ -417,7 +418,7 @@ class RotinaPrg:
 
                 # Reseta relé que liga entrada de mêgometro atuado
                 self.io.wp_8027(self.io.ADR_3,8,1)
-                time.sleep(0.1)
+                self.sleep_ms(0.1)
                 self.io.wp_8027(self.io.ADR_3,8,0)
             
                 self.start_megometro()
@@ -458,7 +459,7 @@ class RotinaPrg:
 
                 # Garante o Stop do megômetro - pulso
                 self.io.wp_8027(self.io.ADR_3, 7, 1)# liga
-                time.sleep(0.3)
+                self.sleep_ms(0.3)
                 self.io.wp_8027(self.io.ADR_3, 7, 0)# desliga
 
                 # Liga contator que seleciona tensão - ligado seleciona Megômetro
@@ -466,7 +467,7 @@ class RotinaPrg:
 
                 # Reseta relé que liga entrada de mêgometro atuado
                 self.io.wp_8027(self.io.ADR_3,8,1)
-                time.sleep(0.1)
+                self.sleep_ms(0.1)
                 self.io.wp_8027(self.io.ADR_3,8,0)
 
                 self.start_megometro()
@@ -497,13 +498,13 @@ class RotinaPrg:
     def start_megometro(self):
         # Garante o Stop do megômetro - pulso
         self.io.wp_8027(self.io.ADR_3, 6, 1)# liga
-        time.sleep(0.3)
+        self.sleep_ms(0.3)
         self.io.wp_8027(self.io.ADR_3, 6, 0)# desliga
 
     def stop_megometro(self):
         # Reseta relé que liga entrada de mêgometro atuado
         self.io.wp_8027(self.io.ADR_3,7,1)
-        time.sleep(0.1)
+        self.sleep_ms(0.1)
         self.io.wp_8027(self.io.ADR_3,7,0)
 
     def acende_verde(self):
@@ -521,7 +522,7 @@ class RotinaPrg:
 
             # Garante o Stop do megômetro - pulso
             self.io.wp_8027(self.io.ADR_3, 7, 1)# liga
-            time.sleep(0.3)
+            self.sleep_ms(0.3)
             self.io.wp_8027(self.io.ADR_3, 7, 0)# desliga
 
             # Liga contator que seleciona tensão - ligado seleciona Megômetro
@@ -529,7 +530,7 @@ class RotinaPrg:
 
             # Reseta relé que liga entrada de mêgometro atuado
             self.io.wp_8027(self.io.ADR_3,8,1)
-            time.sleep(0.1)
+            self.sleep_ms(0.1)
             self.io.wp_8027(self.io.ADR_3,8,0)
         
             self.start_megometro()
@@ -547,7 +548,7 @@ class RotinaPrg:
 
             # Garante o Stop do megômetro - pulso
             self.io.wp_8027(self.io.ADR_3, 7, 1)# liga
-            time.sleep(0.3)
+            self.sleep_ms(0.3)
             self.io.wp_8027(self.io.ADR_3, 7, 0)# desliga
 
             # Liga contator que seleciona tensão - ligado seleciona Megômetro
@@ -555,7 +556,7 @@ class RotinaPrg:
 
             # Reseta relé que liga entrada de mêgometro atuado
             self.io.wp_8027(self.io.ADR_3,8,1)
-            time.sleep(0.1)
+            self.sleep_ms(0.1)
             self.io.wp_8027(self.io.ADR_3,8,0)
 
             self.start_megometro()
@@ -594,7 +595,7 @@ class RotinaPrg:
 
                 # # Aciona Megômetro
                 # self.io.wp_8027(self.io.ADR_3,6,1)
-                # time.sleep(0.2)
+                # self.sleep_ms(0.2)
                 # self.io.wp_8027(self.io.ADR_3,6,0)
 
                 # Aguarda um pequeno tempo para acionamento do rele que é setado pelo sensor ótico
@@ -607,12 +608,12 @@ class RotinaPrg:
 
                     # # Desliga Megômetro
                     # self.io.wp_8027(self.io.ADR_3,7,1)
-                    # time.sleep(0.2)
+                    # self.sleep_ms(0.2)
                     # self.io.wp_8027(self.io.ADR_3,7,0)
 
                     # Depois de conferido a isolação pelo megômetro, reseta relé que liga entrada
                     self.io.wp_8027(self.io.ADR_3,8,1)
-                    time.sleep(0.2)
+                    self.sleep_ms(0.2)
                     self.io.wp_8027(self.io.ADR_3,8,0)
 
                     # desliga saída para não conflitar com o próximo
@@ -644,7 +645,7 @@ class RotinaPrg:
 
                 # # Aciona Megômetro
                 # self.io.wp_8027(self.io.ADR_3,6,1)
-                # time.sleep(0.2)
+                # self.sleep_ms(0.2)
                 # self.io.wp_8027(self.io.ADR_3,6,0)
 
                 # Aguarda um pequeno tempo para acionamento do rele que é setado pelo sensor ótico
@@ -659,12 +660,12 @@ class RotinaPrg:
 
                     # # Desliga Megômetro
                     # self.io.wp_8027(self.io.ADR_3,7,1)
-                    # time.sleep(0.2)
+                    # self.sleep_ms(0.2)
                     # self.io.wp_8027(self.io.ADR_3,7,0)
 
                     # Depois de conferido a isolação pelo megômetro, reseta relé que liga entrada
                     self.io.wp_8027(self.io.ADR_3,8,1)
-                    time.sleep(0.2)
+                    self.sleep_ms(0.2)
                     self.io.wp_8027(self.io.ADR_3,8,0)
 
                     # desliga saída para não conflitar com o próximo
@@ -723,12 +724,12 @@ class RotinaPrg:
     def marca_peca_esquerda(self):
         # self.operacao.io.wp_8027(self.io.ADR_3, 2, 1) # Aciona pistão de marcação esquerdo
         self.io.wp_8027(self.io.ADR_3, 2, 1) # Aciona pistão de marcação esquerdo
-        time.sleep(0.5)
+        self.sleep_ms(0.5)
         self.io.wp_8027(self.io.ADR_3, 2, 0) # Desliga pistão de marcação esquerdo 
 
     def marca_peca_direita(self):
         self.io.wp_8027(self.io.ADR_3, 3, 1) # Aciona pistão de marcação esquerdo
-        time.sleep(0.5)
+        self.sleep_ms(0.5)
         self.io.wp_8027(self.io.ADR_3, 3, 0) # Desliga pistão de marcação esquerdo
 
     def limpa_saidas_esquerda_direita(self):
@@ -737,3 +738,8 @@ class RotinaPrg:
             
             self.io.wp_8027(self.io.ADR_2,i,0)
             
+    def sleep_ms(self, milliseconds):
+        ms = milliseconds*1000
+        loop = QEventLoop()
+        QTimer.singleShot(int(ms), loop.quit)
+        loop.exec_()
