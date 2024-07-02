@@ -96,7 +96,7 @@ b) No arquivo .desktop, adicione as seguintes linhas de código:
 ```text
 [Desktop Entry]
 Name=choque-termico
-Exec=/usr/bin/python /home/maeda/choque-termico/main.py
+Exec=sh -c "cd /meu_dir; /usr/bin/python /home/maeda/choque-termico/main.py"
 ```
 
 O diretório /usr/bin/pythyon é onde está instalado o python,normalmente no raspberry esse é o local padrão.
