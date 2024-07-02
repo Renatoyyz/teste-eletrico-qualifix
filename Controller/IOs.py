@@ -1,5 +1,6 @@
 import serial
 from PyQt5.QtCore import QTimer, QEventLoop
+import time
 
 class FakeRPiGPIO:
     BCM = "BCM"
