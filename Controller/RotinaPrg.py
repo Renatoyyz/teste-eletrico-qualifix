@@ -708,7 +708,10 @@ class RotinaPrg:
         # self.io.wp_8027(self.io.ADR_3, 5, 0)
         # Abaixa pistão - Liga válvula
         # self.io.wp_8027(self.io.ADR_3, 4, 1)
-        self.io.io_rpi.aciona_rele_4(1)
+        # self.io.io_rpi.aciona_rele_4(1)
+        self.io.wp_8027(self.io.ADR_4, 5, 0)
+        time.sleep(0.3)
+        self.io.wp_8027(self.io.ADR_4, 4, 1)
         
         #Aguarda pistão descer
         if self.sleep_check_erro(self.TEMPO_DESCIDA_PISTAO) == False:
@@ -728,7 +731,10 @@ class RotinaPrg:
         # Sobe pistão - Liga válvula
         # self.io.wp_8027(self.io.ADR_3, 5, 1)
 
-        self.io.io_rpi.aciona_rele_4(0)
+        # self.io.io_rpi.aciona_rele_4(0)
+        self.io.wp_8027(self.io.ADR_4, 4, 0)
+        time.sleep(0.3)
+        self.io.wp_8027(self.io.ADR_4, 5, 1)
         
         #Aguarda pistão descer
         if self.sleep_check_erro(self.TEMPO_DESCIDA_PISTAO) == False:

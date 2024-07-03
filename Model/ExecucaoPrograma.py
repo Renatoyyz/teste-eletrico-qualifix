@@ -33,7 +33,7 @@ class Atualizador(QObject):
             # Aguarda 1 segundo antes de atualizar novamente
             # QTimer.singleShot(500, lambda: None)  # Substitui sleep_ms com QTimer diretamente
             # self.sleep_ms(0.5)
-            QThread.msleep(500)  # Cria um atraso de 500 mili segundo
+            QThread.msleep(250)  # Cria um atraso de 250 mili segundo
             QApplication.processEvents()
 
     def parar(self):
@@ -62,6 +62,8 @@ class ExecutaRotinaThread(QObject):
             result_condu_d = []
             result_iso_e = []
             result_iso_d = []
+            cond = False
+            iso = False
             
             if self.operacao.em_execucao == True:
                 # Limpa todas as saídas
@@ -85,6 +87,7 @@ class ExecutaRotinaThread(QObject):
                                 self.operacao.esquerda_iso_ok = 1 # Sinaliza para execução, que não passou
                                 self.operacao._visualiza_iso_e = True
                         else:
+                            iso = False
                             result_iso_e = self.operacao.rotina.fake_isolacao_esquerdo()# Popula lista com valores falsos
                             self.operacao.esquerda_condu_ok = 1 # Sinaliza para execução, que não passou
                             self.operacao._visualiza_condu_e = True
@@ -120,6 +123,7 @@ class ExecutaRotinaThread(QObject):
                                 self.operacao.direita_iso_ok = 1 # Sinaliza para execução, que não passou
                                 self.operacao._visualiza_iso_d = True
                         else:
+                            iso = False
                             result_iso_d = self.operacao.rotina.fake_isolacao_direito()# Popula lista com valores falsos
                             self.operacao.direita_condu_ok = 1 # Sinaliza para execução, que não passou
                             self.operacao._visualiza_condu_d = True
@@ -150,6 +154,7 @@ class ExecutaRotinaThread(QObject):
 
                 # Emite o evento para conclusão so processo
                 self.sinal_execucao.emit(result_condu_e,result_iso_e,result_condu_d,result_iso_d)
+            QThread.msleep(500)  # Cria um atraso de 500 mili segundo
             QApplication.processEvents()
             # Aguarda 1 segundo antes de atualizar novamente
             # self.sleep_ms(0.5)
@@ -369,7 +374,7 @@ class TelaExecucao(QDialog):
             self.cor_eletrodo_teste()
 
             self._ofset_temo+=1
-            if (self._ofset_temo % 2) == 0:
+            if (self._ofset_temo % 4) == 0:
                 self.tempo_ciclo+=1
                 self.ui.txTempoCiclos.setText(f"{self.tempo_ciclo} s")
         elif self.em_execucao == False and self._nao_passsou_peca == True:# Se está em execução e peça não passou

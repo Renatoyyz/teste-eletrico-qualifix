@@ -118,6 +118,7 @@ class IO_MODBUS:
         self.valor_saida_direito = 0
         self.valor_saida_esquerdo = 0
         self.valor_saida_geral = 0
+        self.valor_saida_geral2 = 0
 
         self.fake_modbus = False
         self.cnt_serial = 0
@@ -145,18 +146,21 @@ class IO_MODBUS:
         self.saida = 0
         self.on_off = 0
         self.cnt_entradas = 1
-
-        self.ser = serial.Serial(
-                                    port='/dev/ttyUSB0',  # Porta serial padrão no Raspberry Pi 4
-                                    # port='/dev/tty.URT0',  # Porta serial padrão no Raspberry Pi 4
-                                    baudrate=9600,       # Taxa de baud
-                                    bytesize=8,
-                                    parity="N",
-                                    stopbits=1,
-                                    timeout=1,            # Timeout de leitura
-                                    #xonxoff=False,         # Controle de fluxo por software (XON/XOFF)
-                                    #rtscts=True
-                                )
+        try:
+            self.ser = serial.Serial(
+                                        port='/dev/ttyUSB0',  # Porta serial padrão no Raspberry Pi 4
+                                        # port='/dev/tty.URT0',  # Porta serial padrão no Raspberry Pi 4
+                                        baudrate=9600,       # Taxa de baud
+                                        bytesize=8,
+                                        parity="N",
+                                        stopbits=1,
+                                        timeout=1,            # Timeout de leitura
+                                        #xonxoff=False,         # Controle de fluxo por software (XON/XOFF)
+                                        #rtscts=True
+                                    )
+        except Exception as e:
+            print(f"Erro ao conectar com a serial: {e}")
+            return
 
     def aciona_saida(self,adr,out,on_off):
         self.habilita_saida = True
@@ -191,7 +195,7 @@ class IO_MODBUS:
         elif adr == self.ADR_3:
             mask = self.valor_saida_geral
         elif adr == self.ADR_4:
-            mask = self.valor_saida_geral
+            mask = self.valor_saida_geral2
 
 
 
@@ -220,7 +224,7 @@ class IO_MODBUS:
             elif adr == self.ADR_3:
                 self.valor_saida_geral = mask
             elif adr == self.ADR_4:
-                self.valor_saida_geral = mask
+                self.valor_saida_geral2 = mask
 
         elif (adr == self.ADR_1 or adr == self.ADR_2 or adr == self.ADR_3 or adr == self.ADR_4) and (on_off==0):
             id_loc = hex(adr)[2:]
@@ -248,7 +252,7 @@ class IO_MODBUS:
             elif adr == self.ADR_3:
                 self.valor_saida_geral = mask 
             elif adr == self.ADR_4:
-                self.valor_saida_geral = mask 
+                self.valor_saida_geral2 = mask 
 
         # Invertendo a ordem dos bits
         # out_bin = out_bin[::-1]
@@ -411,6 +415,8 @@ class IO_MODBUS:
             mask = self.valor_saida_direito
         elif adr == self.ADR_3:
             mask = self.valor_saida_geral
+        elif adr == self.ADR_4:
+            mask = self.valor_saida_geral2
 
         if bit==1:
             out_loc = ( (1 << (bit-1+8)) | (mask) ) & 0xFEFF
@@ -440,6 +446,8 @@ class IO_MODBUS:
             mask = self.valor_saida_direito
         elif adr == self.ADR_3:
             mask = self.valor_saida_geral
+        elif adr == self.ADR_4:
+            mask = self.valor_saida_geral2
 
         if bit==9:
             out_loc = ( (1 << (bit-1-8)) | (mask) ) & 0xFFFE
@@ -469,25 +477,15 @@ class IO_MODBUS:
 if __name__ == '__main__':
     import time
     io = IO_MODBUS()
-    adr = 1
-
-    # for i in range(1,17):
-    #     io.wp_8027(adr,i,1)
-    #     time.sleep(0.2)
-    # for i in range(1,17):
-    #     io.wp_8027(adr,i,0)
-    #     time.sleep(0.2)
     cmd = ""
     while cmd != "q":
+        adr = input("Digite o endereço\n")
         cmd = input("Digite a saida que queira testar.\n")
+        stat = input("Digite 1=ligar 0=desligar.\n")
         try:
-            io.aciona_saida(adr,int(cmd),1)
+            io.wp_8027(int(adr),int(cmd),int(stat))
             print(f"A saida {int(cmd)} foi acionada.")
         except:
             if cmd != "q":
                 print("Digite um número válido.")
-        
-        print(f"Entradas:\n1: {io.entradas_wp8026['in_1']}\n2: {io.entradas_wp8026['in_2']}\n3: {io.entradas_wp8026['in_3']}\n4: {io.entradas_wp8026['in_4']}\n5: {io.entradas_wp8026['in_5']}\n6: {io.entradas_wp8026['in_6']}\n7: {io.entradas_wp8026['in_7']}\n8: {io.entradas_wp8026['in_8']}\n")
         time.sleep(1)
-
-    io.stop()
