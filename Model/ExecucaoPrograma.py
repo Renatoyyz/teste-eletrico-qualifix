@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QDialog, QApplication
-from PyQt5.QtCore import Qt, QCoreApplication, QObject, pyqtSignal, QThread, QTimer, QEventLoop
+from PyQt5.QtCore import Qt, QCoreApplication, QObject, pyqtSignal, QThread
 
 from datetime import datetime
 
@@ -31,17 +31,19 @@ class Atualizador(QObject):
             self.sinal_atualizar.emit(data_formatada)
 
             # Aguarda 1 segundo antes de atualizar novamente
+            # QTimer.singleShot(500, lambda: None)  # Substitui sleep_ms com QTimer diretamente
+            # self.sleep_ms(0.5)
+            QThread.msleep(500)  # Cria um atraso de 500 mili segundo
             QApplication.processEvents()
-            self.sleep_ms(0.5)
 
     def parar(self):
         self._running = False
 
-    def sleep_ms(self, milliseconds):
-        ms = milliseconds*1000
-        loop = QEventLoop()
-        QTimer.singleShot(int(ms), loop.quit)
-        loop.exec_()
+    # def sleep_ms(self, milliseconds):
+    #     ms = milliseconds*1000
+    #     loop = QEventLoop()
+    #     QTimer.singleShot(int(ms), loop.quit)
+    #     loop.exec_()
 
 class ExecutaRotinaThread(QObject):
     sinal_execucao = pyqtSignal(list,list,list,list)# Inicializa com a quantidade de variáveis que se deseja
@@ -150,16 +152,18 @@ class ExecutaRotinaThread(QObject):
                 self.sinal_execucao.emit(result_condu_e,result_iso_e,result_condu_d,result_iso_d)
             QApplication.processEvents()
             # Aguarda 1 segundo antes de atualizar novamente
-            self.sleep_ms(0.5)
+            # self.sleep_ms(0.5)
+            # QTimer.singleShot(500, lambda: None)  # Substitui sleep_ms com QTimer diretamente
+            
 
     def parar(self):
         self._running = False
 
-    def sleep_ms(self, milliseconds):
-        ms = milliseconds*1000
-        loop = QEventLoop()
-        QTimer.singleShot(int(ms), loop.quit)
-        loop.exec_()
+    # def sleep_ms(self, milliseconds):
+    #     ms = milliseconds*1000
+    #     loop = QEventLoop()
+    #     QTimer.singleShot(int(ms), loop.quit)
+    #     loop.exec_()
 
 class TelaExecucao(QDialog):
     def __init__(self, dado=None, io=None, db=None, rotina=None, nome_prog=None, continuacao=None, db_rotina=None):
@@ -303,8 +307,8 @@ class TelaExecucao(QDialog):
 
         # if self.execucao_habilita_desabilita == True  and self._nao_passsou_peca == False:
         if self.execucao_habilita_desabilita == True and  self.io.io_rpi.bot_acio_e == 0 and self.io.io_rpi.bot_acio_d == 0 and self._nao_passsou_peca == False:
-            while(self.io.io_rpi.bot_acio_e == 0 or self.io.io_rpi.bot_acio_d == 0):
-                pass
+            # while(self.io.io_rpi.bot_acio_e == 0 or self.io.io_rpi.bot_acio_d == 0):
+            #     pass
             # self.rotina.sobe_pistao()
             #escrever aqui o desliga verde e vermelho da torre
             self.rotina.apaga_torre()
@@ -1136,8 +1140,3 @@ class TelaExecucao(QDialog):
         self.execucao.parar()  # Parar a thread do atualizador
         self.execucao_thread.quit()
         self.execucao_thread.wait()
-    def sleep_ms(self, milliseconds):
-        ms = milliseconds*1000
-        loop = QEventLoop()
-        QTimer.singleShot(int(ms), loop.quit)
-        loop.exec_()

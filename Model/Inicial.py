@@ -1,7 +1,6 @@
 from PyQt5.QtWidgets import QApplication, QMainWindow
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QThread
 import os
-import time
 
 from View.tela_inicial import Ui_TelaInicial
 
@@ -65,7 +64,7 @@ class TelaInicial(QMainWindow):
 
     def shutdown_pi(self):
         print("Desligando o Raspberry Pi com segurança...")
-        time.sleep(10)  # Espera 10 segundos antes de iniciar o processo de desligamento
+        QThread.sleep(10)
         os.system("sudo shutdown now")
 
 

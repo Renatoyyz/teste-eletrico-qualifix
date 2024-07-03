@@ -21,3 +21,5 @@ logging.info('Isso é uma mensagem de informação.')
 logging.warning('Isso é uma mensagem de aviso.')
 logging.error('Isso é uma mensagem de erro.')
 logging.critical('Isso é uma mensagem crítica.')
+
+

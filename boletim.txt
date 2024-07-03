@@ -10,7 +10,7 @@ Linha 76 mudar botao para 0
 
 IOs.py
 Linha 153 mudar porta serial
-Linha 122 KakeModbus para False
+Linha 122 fake_modubus para False
 
 Dados.py
 Linha 23 mudar full_screem para True

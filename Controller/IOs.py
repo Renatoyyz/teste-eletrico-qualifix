@@ -1,5 +1,4 @@
 import serial
-from PyQt5.QtCore import QTimer, QEventLoop
 import time
 
 class FakeRPiGPIO:
@@ -275,7 +274,7 @@ class IO_MODBUS:
                 if time.time() - start_time > self.ser.timeout:
                     print("Timeout: Nenhuma resposta do escravo.")
                     break
-                self.sleep_ms(0.1)  # Aguarde um curto período antes de verificar novamente
+                time.sleep(0.1)  # Aguarde um curto período antes de verificar novamente
 
             dados_recebidos = self.ser.read(8)
             self.ser.flushInput()  # Limpa o buffer de entrada após a leitura
@@ -294,7 +293,7 @@ class IO_MODBUS:
                 if parte_superior == superior_crc and parte_inferior == inferior_crc:
                     dados_recebidos = dados_recebidos[14:16]
                     dados_recebidos = int(dados_recebidos,16)
-                    # self.sleep_ms(0.1)
+                    # time.sleep(0.1)
                     self.cnt_serial = 0
                     return dados_recebidos
                 else:
@@ -315,7 +314,7 @@ class IO_MODBUS:
         if self.fake_modbus == False:
             return self.wp_8026_(adr=adr, input=input)
         else:
-            return 1
+            return 0
     def wp_8026_(self, adr, input):
         dados_recebidos = None
 
@@ -341,7 +340,7 @@ class IO_MODBUS:
                     if time.time() - start_time > self.ser.timeout:
                         print("Timeout: Nenhuma resposta do escravo.")
                         return -1
-                    self.sleep_ms(0.1)  # Aguarde um curto período antes de verificar novamente
+                    time.sleep(0.1)  # Aguarde um curto período antes de verificar novamente
                 dados_recebidos = self.ser.read(7)
                 self.ser.flushInput()  # Limpa o buffer de entrada após a leitura
                 if dados_recebidos != b'':
@@ -395,7 +394,7 @@ class IO_MODBUS:
     def reset_serial(self):
         try:
             self.ser.close()
-            self.sleep_ms(0.5)  # Aguarda um curto período antes de reabrir a porta
+            time.sleep(0.5)  # Aguarda um curto período antes de reabrir a porta
             self.ser.open()
             self.ser.flushInput()  # Limpa o buffer de entrada após reabrir a porta
             print("Porta serial resetada com sucesso.")
@@ -460,11 +459,11 @@ class IO_MODBUS:
             out_loc = ( (1 << (bit-1-8)) | (mask) ) & 0xFF7F
 
         return out_loc 
-    def sleep_ms(self, milliseconds):
-        ms = milliseconds*1000
-        loop = QEventLoop()
-        QTimer.singleShot(int(ms), loop.quit)
-        loop.exec_()
+    # def sleep_ms(self, milliseconds):
+    #     ms = milliseconds*1000
+    #     loop = QEventLoop()
+    #     QTimer.singleShot(int(ms), loop.quit)
+    #     loop.exec_()
 
 
 if __name__ == '__main__':
@@ -474,10 +473,10 @@ if __name__ == '__main__':
 
     # for i in range(1,17):
     #     io.wp_8027(adr,i,1)
-    #     self.sleep_ms(0.2)
+    #     time.sleep(0.2)
     # for i in range(1,17):
     #     io.wp_8027(adr,i,0)
-    #     self.sleep_ms(0.2)
+    #     time.sleep(0.2)
     cmd = ""
     while cmd != "q":
         cmd = input("Digite a saida que queira testar.\n")
