@@ -68,27 +68,29 @@ class ExecutaRotinaThread(QObject):
                     if self.operacao.habili_desbilita_esquerdo == True:
                         self.operacao.qual_teste = self.operacao.TESTE_COND_E
                         result_condu_e = self.operacao.rotina.esquerdo_direito_condutividade(0)# Testa O lado esquerdo
-                        self.operacao.qual_teste = self.operacao.TESTE_ISO_E
-                        result_iso_e = self.operacao.rotina.esquerdo_direito_isolacao(0)# Testa O lado esquerdo
-
                         # Verifica condutividade
                         cond = all(c[2] != 0 for c in result_condu_e)   
                         if cond == True:
                             self.operacao.esquerda_condu_ok = 2 # Sinaliza para execução, que passou
+                            # Se condutividade passou continua testando isolação
+                            self.operacao.qual_teste = self.operacao.TESTE_ISO_E
+                            result_iso_e = self.operacao.rotina.esquerdo_direito_isolacao(0)# Testa O lado esquerdo
+                            # Verifica isolação
+                            iso = all(i[2] != 1 for i in result_iso_e) 
+                            if iso == True:
+                                self.operacao.esquerda_iso_ok = 2 # Sinaliza para execução, que passou
+                            else:
+                                self.operacao.esquerda_iso_ok = 1 # Sinaliza para execução, que não passou
+                                self.operacao._visualiza_iso_e = True
                         else:
+                            result_iso_e = self.operacao.rotina.fake_isolacao_esquerdo()# Popula lista com valores falsos
                             self.operacao.esquerda_condu_ok = 1 # Sinaliza para execução, que não passou
                             self.operacao._visualiza_condu_e = True
-                            
-                        # Verifica isolação
-                        iso = all(i[2] != 1 for i in result_iso_e) 
-                        if iso == True:
-                            self.operacao.esquerda_iso_ok = 2 # Sinaliza para execução, que passou
-                        else:
                             self.operacao.esquerda_iso_ok = 1 # Sinaliza para execução, que não passou
                             self.operacao._visualiza_iso_e = True
 
                         # Se teste de condutividade e de isolação passaram
-                        if cond == True and iso == True:
+                        if cond == True and iso ==  True:
                             self.operacao.rotina.marca_peca_esquerda()
                             self.esquerda_ok = True
                         else:
@@ -96,32 +98,29 @@ class ExecutaRotinaThread(QObject):
 
                         # garante que todas os eletrodos fiquem verdes para ser tocados depois
                         self.operacao._carrega_eletrodos(self.operacao.rotina.coord_eletrodo_esquerdo, "E")# O 'E' é para formar o texto que criará o objeto lbEletrodo1_E   
-                        
-                        # if result_condu_e[2] == 1 and result_iso_e[2] == 0: # Se tste de condutividade e de isolação passaram
-                        #     self.operacao.io.wp_8027(self.io.ADR_3, 2, 1) # Aciona pistão de marcação esquerdo
-                        #     self.sleep_ms(0.5)
-                        #     self.operacao.io.wp_8027(self.io.ADR_3, 2, 0) # Desliga pistão de marcação esquerdo
 
 
                     if self.operacao.habili_desbilita_direito == True:
                         self.operacao.qual_teste = self.operacao.TESTE_COND_D
                         result_condu_d = self.operacao.rotina.esquerdo_direito_condutividade(1)# Testa O lado direito
-                        self.operacao.qual_teste = self.operacao.TESTE_ISO_D
-                        result_iso_d = self.operacao.rotina.esquerdo_direito_isolacao(1)# Testa O lado direito
-
                         # Verifica condutividade
                         cond = all(c[2] != 0 for c in result_condu_d)  
                         if cond == True:
                             self.operacao.direita_condu_ok = 2 # Sinaliza para execução, que passou
+                            # Se condutividade passou continua testando isolação
+                            self.operacao.qual_teste = self.operacao.TESTE_ISO_D
+                            result_iso_d = self.operacao.rotina.esquerdo_direito_isolacao(1)# Testa O lado direito
+                            # Verifica isolação
+                            iso = all(i[2] != 1 for i in result_iso_d)
+                            if iso == True:
+                                self.operacao.direita_iso_ok = 2 # Sinaliza para execução, que passou
+                            else:
+                                self.operacao.direita_iso_ok = 1 # Sinaliza para execução, que não passou
+                                self.operacao._visualiza_iso_d = True
                         else:
+                            result_iso_d = self.operacao.rotina.fake_isolacao_direito()# Popula lista com valores falsos
                             self.operacao.direita_condu_ok = 1 # Sinaliza para execução, que não passou
                             self.operacao._visualiza_condu_d = True
-
-                        # Verifica isolação
-                        iso = all(i[2] != 1 for i in result_iso_d)
-                        if iso == True:
-                            self.operacao.direita_iso_ok = 2 # Sinaliza para execução, que passou
-                        else:
                             self.operacao.direita_iso_ok = 1 # Sinaliza para execução, que não passou
                             self.operacao._visualiza_iso_d = True
 
@@ -133,11 +132,6 @@ class ExecutaRotinaThread(QObject):
                             self.direita_ok = False
                         # garante que todas os eletrodos fiquem verdes para ser tocados depois
                         self.operacao._carrega_eletrodos(self.operacao.rotina.coord_eletrodo_direito, "D")# O 'D' é para formar o texto que criará o objeto lbEletrodo1_D
-                        
-                        # if result_condu_d[2] == 1 and result_iso_d[2] == 0: # Se tste de condutividade e de isolação passaram
-                        #     self.operacao.io.wp_8027(self.io.ADR_3, 3, 1) # Aciona pistão de marcação esquerdo
-                        #     self.sleep_ms(0.5)
-                        #     self.operacao.io.wp_8027(self.io.ADR_3, 3, 0) # Desliga pistão de marcação esquerdo
                             
                 if self.esquerda_ok == True and self.direita_ok == True:
                     self.operacao.rotina.acende_verde()
@@ -528,7 +522,7 @@ class TelaExecucao(QDialog):
             
             # Verifica se peças passaram
             if self.habili_desbilita_direito == True and self.habili_desbilita_esquerdo == True:# Se ambos os lados estiverem habilitados
-                if cond_e != [] and iso_e != [] and cond_d != [] and iso_d != 0:
+                if cond_e != [] and iso_e != [] and cond_d != [] and iso_d != []:
                     if self._verifica_condutividade_isolacao(cond_e, iso_e) == (True,True) and self._verifica_condutividade_isolacao(cond_d, iso_d) == (True,True):
                         self._carrega_peca_passou(0)
                         #escrever aqui o liga verde da torre

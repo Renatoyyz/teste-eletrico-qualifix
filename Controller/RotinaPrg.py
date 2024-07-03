@@ -629,6 +629,17 @@ class RotinaPrg:
         # self.stop_megometro()
 
         return result
+
+    def fake_isolacao_esquerdo(self):
+        result = []
+
+        for i in range(1,17):
+            if self.isolacao_esquerdo[f"ligacao{i}"][2] != "":
+                    # faz leitura e associa a variável
+                    # índice 0 = número da ligação / índice 1 = Nome da ligação / índice 2 = status de ligaçao - 0=passou 1=não passou
+                result.append( [i,self.isolacao_esquerdo[f"ligacao{i}"][2],1] )
+
+        return result
     
     def combinacao_isolacao_direito(self):
         result = []
@@ -679,6 +690,17 @@ class RotinaPrg:
                     break
 
         # self.stop_megometro()
+
+        return result
+    
+    def fake_isolacao_direito(self):
+        result = []
+
+        for i in range(1,17):
+            if self.isolacao_direito[f"ligacao{i}"][2] != "":
+                    # faz leitura e associa a variável
+                    # índice 0 = número da ligação / índice 1 = Nome da ligação / índice 2 = status de ligaçao - 0=passou 1=não passou
+                result.append( [i,self.isolacao_direito[f"ligacao{i}"][2],1] )
 
         return result
 
