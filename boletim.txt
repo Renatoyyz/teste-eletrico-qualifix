@@ -16,7 +16,7 @@ Dados.py
 Linha 23 mudar full_screem para True
 
 ExecucaoPrograma.py 
-Linha 305 mudar para botoes
+Linha 300 mudar para botoes
 
 ExecucaoPrograma
 698 self.salva_rotina()# Atualiza dados no banco de dados

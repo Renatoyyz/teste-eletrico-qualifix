@@ -10,31 +10,23 @@ from View.tela_execucao_programa import Ui_TelaExecucao
 
 from datetime import datetime
 
-class Atualizador(QObject):
+class Atualizador(QThread):
     sinal_atualizar = pyqtSignal(str)
 
     def __init__(self, operacao):
         super().__init__()
         self.operacao = operacao
         self._running = True
-        self._ofset_temo = 0
 
-    def thread_atualizar_valor(self):
-        while self._running == True:
-            # Obtém o valor atualizado do dado (ou qualquer outra lógica necessária)
-            # Obtém a data e hora atuais
+    def run(self):
+        while self._running:
             data_hora = datetime.now()
             data_formatada = data_hora.strftime("%d/%m/%Y %H:%M:%S")
-            # print(valor_atualizado)
-
-            # Emite o sinal para atualizar a interface do usuário
             self.sinal_atualizar.emit(data_formatada)
+            QThread.msleep(250)
 
-            # Aguarda 1 segundo antes de atualizar novamente
-            # QTimer.singleShot(500, lambda: None)  # Substitui sleep_ms com QTimer diretamente
-            # self.sleep_ms(0.5)
-            QThread.msleep(250)  # Cria um atraso de 250 mili segundo
-            QApplication.processEvents()
+    def parar(self):
+        self._running = False
 
     def parar(self):
         self._running = False
@@ -45,7 +37,7 @@ class Atualizador(QObject):
     #     QTimer.singleShot(int(ms), loop.quit)
     #     loop.exec_()
 
-class ExecutaRotinaThread(QObject):
+class ExecutaRotinaThread(QThread):
     sinal_execucao = pyqtSignal(list,list,list,list)# Inicializa com a quantidade de variáveis que se deseja
 
     def __init__(self, operacao):
@@ -55,15 +47,13 @@ class ExecutaRotinaThread(QObject):
         self.esquerda_ok =False
         self.direita_ok =False
 
-    def atualizar_execucao(self):
+    def run(self):
         while self._running == True:
             # Emite o sinal para atualizar a interface do usuário
             result_condu_e = []
             result_condu_d = []
             result_iso_e = []
             result_iso_d = []
-            cond = False
-            iso = False
             
             if self.operacao.em_execucao == True:
                 # Limpa todas as saídas
@@ -276,19 +266,15 @@ class TelaExecucao(QDialog):
         self.load_config()
 
     def inicializa_threads(self):
+        # Atualizador Thread
         self.atualizador = Atualizador(self)
         self.atualizador.sinal_atualizar.connect(self.thread_atualizar_valor)
-        self.atualizador_thread = QThread()
-        self.atualizador.moveToThread(self.atualizador_thread)
-        self.atualizador_thread.started.connect(self.atualizador.thread_atualizar_valor)
-        self.atualizador_thread.start()
+        self.atualizador.start()
 
+        # ExecutaRotinaThread
         self.execucao = ExecutaRotinaThread(self)
         self.execucao.sinal_execucao.connect(self.thread_execucao)
-        self.execucao_thread = QThread()
-        self.execucao.moveToThread(self.execucao_thread)
-        self.execucao_thread.started.connect(self.execucao.atualizar_execucao)
-        self.execucao_thread.start()
+        self.execucao.start()
 
 
     def muda_texto_obj(self, obj_str, text):
@@ -1137,11 +1123,9 @@ class TelaExecucao(QDialog):
         self.dado.set_telas(self.dado.TELA_INICIAL)
         self.close()
     def closeEvent(self, event):
-        event.accept()
-        self.atualizador.parar()  # Parar a thread do atualizador
-        self.atualizador_thread.quit()
-        self.atualizador_thread.wait()
+        self.atualizador.parar()
+        self.atualizador.wait()  # Aguarde a thread finalizar
 
-        self.execucao.parar()  # Parar a thread do atualizador
-        self.execucao_thread.quit()
-        self.execucao_thread.wait()
+        self.execucao.parar()
+        self.execucao.wait()  # Aguarde a thread finalizar
+        event.accept()
