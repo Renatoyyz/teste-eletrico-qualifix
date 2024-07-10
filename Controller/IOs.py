@@ -267,7 +267,7 @@ class IO_MODBUS:
         parte_superior = (crc_result >> 8) & 0xFF  # Desloca 8 bits para a direita e aplica a máscara 0xFF
         parte_inferior = crc_result & 0xFF        # Aplica a máscara 0xFF diretamente
 
-        for i in range(5):
+        for i in range(3):
             try:
                 # Repete-se os comandos em decimal com os devidos bytes de CRC
                 self.ser.write([adr,0x0f,0,0,0,16,2,out_val_l,out_val_h,parte_inferior,parte_superior])
@@ -299,14 +299,15 @@ class IO_MODBUS:
                         dados_recebidos = int(dados_recebidos,16)
                         return dados_recebidos
                     else:
-                        if i > 3:
+                        if i > 1:
                             self.reset_serial()
                 else:
-                    if i > 3:
+                    if i > 1:
                         self.reset_serial()
             except Exception as e:
                 print(f"Erro de comunicação: {e}")
                 return -1 # Indica erro de alguma natureza....
+        return -1
         
     def wp_8026(self, adr, input):
         if self.fake_modbus == False:
@@ -329,7 +330,7 @@ class IO_MODBUS:
             parte_superior = (crc_result >> 8) & 0xFF  # Desloca 8 bits para a direita e aplica a máscara 0xFF
             parte_inferior = crc_result & 0xFF        # Aplica a máscara 0xFF diretamente
 
-            for i in range(5):
+            for i in range(3):
                 try:
                     # Repete-se os comandos em decimal com os devidos bytes de CRC
                     self.ser.write([adr,2,0,0,0,16,parte_inferior, parte_superior])
@@ -374,16 +375,17 @@ class IO_MODBUS:
 
                             return result
                         else:
-                            if i > 3:
+                            if i > 1:
                                 self.reset_serial()
                             # return -1
                     else:
-                        if i > 3:
+                        if i > 1:
                             self.reset_serial()
                     
                 except:
                     print("Erro de comunicação")
                     return -1 # Indica erro de alguma natureza....
+            return -1
 
 
         return 0
