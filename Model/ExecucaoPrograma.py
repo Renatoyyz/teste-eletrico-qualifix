@@ -23,7 +23,7 @@ class Atualizador(QThread):
             data_hora = datetime.now()
             data_formatada = data_hora.strftime("%d/%m/%Y %H:%M:%S")
             self.sinal_atualizar.emit(data_formatada)
-            QThread.msleep(250)
+            QThread.msleep(125)
 
     def parar(self):
         self._running = False
@@ -57,8 +57,8 @@ class ExecutaRotinaThread(QThread):
             
             if self.operacao.em_execucao == True:
                 # Limpa todas as saídas
-                self.operacao.rotina.limpa_saidas_esquerda_direita()
                 if self.operacao.rotina.abaixa_pistao() == True:
+                    self.operacao.rotina.limpa_saidas_esquerda_direita()# Desativa todos os relés por segurança
                     if self.operacao.habili_desbilita_esquerdo == True:
                         self.operacao.qual_teste = self.operacao.TESTE_COND_E
                         result_condu_e = self.operacao.rotina.esquerdo_direito_condutividade(0)# Testa O lado esquerdo
@@ -93,7 +93,9 @@ class ExecutaRotinaThread(QThread):
 
                         # garante que todas os eletrodos fiquem verdes para ser tocados depois
                         self.operacao._carrega_eletrodos(self.operacao.rotina.coord_eletrodo_esquerdo, "E")# O 'E' é para formar o texto que criará o objeto lbEletrodo1_E   
-
+                    else:
+                        self.esquerda_ok = True # Se Lado esquerdo não foi escolhido, sinaliza como ok para poder 
+                                                # continuar com o lado direito
 
                     if self.operacao.habili_desbilita_direito == True:
                         self.operacao.qual_teste = self.operacao.TESTE_COND_D
@@ -128,7 +130,10 @@ class ExecutaRotinaThread(QThread):
                             self.direita_ok = False
                         # garante que todas os eletrodos fiquem verdes para ser tocados depois
                         self.operacao._carrega_eletrodos(self.operacao.rotina.coord_eletrodo_direito, "D")# O 'D' é para formar o texto que criará o objeto lbEletrodo1_D
-                            
+                    else:
+                        self.direita_ok = True # Se Lado direito não foi escolhido, sinaliza como ok para poder 
+                                                # continuar com o lado esquerdo    
+                        
                 if self.esquerda_ok == True and self.direita_ok == True:
                     self.operacao.rotina.acende_verde()
                     self.operacao.rotina.sobe_pistao()
@@ -144,7 +149,7 @@ class ExecutaRotinaThread(QThread):
 
                 # Emite o evento para conclusão so processo
                 self.sinal_execucao.emit(result_condu_e,result_iso_e,result_condu_d,result_iso_d)
-            QThread.msleep(500)  # Cria um atraso de 500 mili segundo
+            QThread.msleep(100)  # Cria um atraso de 100 mili segundo
             QApplication.processEvents()
             # Aguarda 1 segundo antes de atualizar novamente
             # self.sleep_ms(0.5)
@@ -359,9 +364,11 @@ class TelaExecucao(QDialog):
             
             self.cor_eletrodo_teste()
 
-            self._ofset_temo+=1
-            if (self._ofset_temo % 4) == 0:
-                self.tempo_ciclo+=1
+            # A Thread AtualizaValor atualiza de 125 em 125 ms
+            # para que a indicação de tempo atualiza de 1 em 1 s, aplica-se o algoritimo de resto = 0
+            self._ofset_temo += 1
+            if (self._ofset_temo % 8) == 0:
+                self.tempo_ciclo = 0
                 self.ui.txTempoCiclos.setText(f"{self.tempo_ciclo} s")
         elif self.em_execucao == False and self._nao_passsou_peca == True:# Se está em execução e peça não passou
             # Habilita botão de descarte ou retrabalho
