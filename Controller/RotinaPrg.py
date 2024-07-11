@@ -27,9 +27,9 @@ import time
 class RotinaPrg:
     def __init__(self, dado=None, io=None, db=None):
 
-        self.TEMPO_DESCIDA_PISTAO = 2000
-        self.TEMPO_SUBIDA_PISTAO = 2000
-        self.TEMPO_ACIONAMENTO_RELE = 800
+        self.TEMPO_DESCIDA_PISTAO = 1500
+        self.TEMPO_SUBIDA_PISTAO = 500
+        self.TEMPO_ACIONAMENTO_RELE = 550
 
         self.dado=dado
         self.io=io
@@ -216,8 +216,6 @@ class RotinaPrg:
             
             #Aguarda pistão descer
             if self.sleep_check_erro(self.TEMPO_DESCIDA_PISTAO) == False:
-                # Abaixa pistão - Desliga válvula
-                # self.io.wp_8027(self.io.ADR_3, 4, 0)
 
                 # realiza testes de condutividade
                 result = self.combinacao_condutividade_esquerdo()
