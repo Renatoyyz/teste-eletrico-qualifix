@@ -1,10 +1,7 @@
-from PyQt5.QtWidgets import QDialog, QApplication
-from PyQt5.QtCore import Qt, QCoreApplication, QObject, pyqtSignal, QThread
-
+from PyQt5.QtWidgets import QDialog
+from PyQt5.QtCore import Qt, QCoreApplication, QObject, pyqtSignal, QThread, pyqtSlot, QMetaObject, Q_ARG
 from datetime import datetime
-
 from Controller.Message import MessageBox, SimpleMessageBox
-
 from Controller.OpenFile import OpenFile
 from View.tela_execucao_programa import Ui_TelaExecucao
 
@@ -24,19 +21,13 @@ class Atualizador(QThread):
                 data_hora = datetime.now()
                 data_formatada = data_hora.strftime("%d/%m/%Y %H:%M:%S")
                 self.sinal_atualizar.emit(data_formatada)
-                QThread.msleep(100)
+                self.msleep(100)
             except Exception as e:
                 print(f"Erro na Thread Atualizador: {e}")
                 self._running = False
 
     def parar(self):
         self._running = False
-
-    # def sleep_ms(self, milliseconds):
-    #     ms = milliseconds*1000
-    #     loop = QEventLoop()
-    #     QTimer.singleShot(int(ms), loop.quit)
-    #     loop.exec_()
 
 class ExecutaRotinaThread(QThread):
     sinal_execucao = pyqtSignal(list,list,list,list)# Inicializa com a quantidade de variáveis que se deseja
@@ -151,7 +142,7 @@ class ExecutaRotinaThread(QThread):
 
                     # Emite o evento para conclusão so processo
                     self.sinal_execucao.emit(result_condu_e,result_iso_e,result_condu_d,result_iso_d)
-                QThread.msleep(100)  # Cria um atraso de 100 mili segundo
+                self.msleep(100)  # Cria um atraso de 100 mili segundo
                 # QApplication.processEvents()
                 # Aguarda 1 segundo antes de atualizar novamente
                 # self.sleep_ms(0.5)
@@ -159,16 +150,9 @@ class ExecutaRotinaThread(QThread):
             except Exception as e:
                     print(f"Erro na Thread ExecutaRotina: {e}")
                     self._running = False
-            
 
     def parar(self):
         self._running = False
-
-    # def sleep_ms(self, milliseconds):
-    #     ms = milliseconds*1000
-    #     loop = QEventLoop()
-    #     QTimer.singleShot(int(ms), loop.quit)
-    #     loop.exec_()
 
 class TelaExecucao(QDialog):
     def __init__(self, dado=None, io=None, db=None, rotina=None, nome_prog=None, continuacao=None, db_rotina=None):
@@ -294,9 +278,6 @@ class TelaExecucao(QDialog):
         cur_obj_tom_conec.setText(str(text))
         # fm = self._translate("TelaExecucao", f"<html><head/><body><p align=\"center\">{text}</p></body></html>")
         cur_obj_tom_conec.setText(self._translate("TelaExecucao", f"{text}"))
-
-
-
     def muda_cor_obj(self, obj_str, cor):
     
         obj_tom_conec = f"{obj_str}"
@@ -304,19 +285,17 @@ class TelaExecucao(QDialog):
         cur_obj_tom_conec.setStyleSheet(f"background-color: rgb({cor});")
 
     def thread_atualizar_valor(self, data_hora):
+        QMetaObject.invokeMethod(self, "atualiza_valor", Qt.QueuedConnection, Q_ARG(str, data_hora))
+
+
+    @pyqtSlot(str)
+    def atualiza_valor(self, data_hora):
         self.ui.lbDataHora.setText(self._translate("TelaExecucao", f"<html><head/><body><p align=\"center\">{data_hora}</p></body></html>"))
 
         # if self.execucao_habilita_desabilita == True  and self._nao_passsou_peca == False:
         if self.execucao_habilita_desabilita == True and  self.io.io_rpi.bot_acio_e == 0 and self.io.io_rpi.bot_acio_d == 0 and self._nao_passsou_peca == False:
-            # while(self.io.io_rpi.bot_acio_e == 0 or self.io.io_rpi.bot_acio_d == 0):
-            #     pass
-            # self.rotina.sobe_pistao()
-            #escrever aqui o desliga verde e vermelho da torre
             self.rotina.apaga_torre()
-
-
             if self._cnt_acionamento_botao < 1:
-                # self.sleep_ms(0.1)
                 self.rotina.flag_erro_geral = False
                 self._nao_passsou_peca = False
                 self.em_execucao = True
@@ -338,7 +317,6 @@ class TelaExecucao(QDialog):
                 self.direita_condu_ok = 0
                 self.direita_iso_ok = 0
             
-
         if self.em_execucao == True and self._nao_passsou_peca == False:# Se está em execução e peça passou
 
             if self.qual_teste == self.SEM_TESTE:
@@ -516,6 +494,12 @@ class TelaExecucao(QDialog):
 
     # Método chamado quando finaliza a thread de execução
     def thread_execucao(self, cond_e, iso_e, cond_d, iso_d):
+        QMetaObject.invokeMethod(self, "execucao", Qt.QueuedConnection, 
+                                 Q_ARG(list, cond_e), Q_ARG(list, iso_e), 
+                                 Q_ARG(list, cond_d), Q_ARG(list, iso_d))
+
+    @pyqtSlot(list, list, list, list)
+    def execucao(self,  cond_e, iso_e, cond_d, iso_d):
         if self.em_execucao == True:
             self.cond_e.clear()
             self.cond_d.clear()
@@ -599,7 +583,8 @@ class TelaExecucao(QDialog):
                         # self.msg.exec(msg="Favor apertar iniciar para ter acesso a peça.")
                         #escrever aqui o liga vermelho da torre
 
-        self._cnt_acionamento_botao=0
+        self._cnt_acionamento_botao=0        
+
 
     # qual_passou = 0 : Passou as duas peças
     #               1 : Passou só a esquerda habilitada
@@ -1136,9 +1121,12 @@ class TelaExecucao(QDialog):
         self.dado.set_telas(self.dado.TELA_INICIAL)
         self.close()
     def closeEvent(self, event):
-        self.atualizador.parar()
-        self.atualizador.wait()  # Aguarde a thread finalizar
+        try:
+            self.atualizador.parar()
+            self.atualizador.wait()  # Aguarde a thread finalizar
 
-        self.execucao.parar()
-        self.execucao.wait()  # Aguarde a thread finalizar
+            self.execucao.parar()
+            self.execucao.wait()  # Aguarde a thread finalizar
+        except Exception as e:
+            print(f"Erro ao finalizar threads: {e}")
         event.accept()
