@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QDialog
+from PyQt5.QtWidgets import QApplication, QDialog
 from PyQt5.QtCore import Qt, QCoreApplication, QObject, pyqtSignal, QThread, pyqtSlot, QMetaObject, Q_ARG
 from datetime import datetime
 from Controller.Message import MessageBox, SimpleMessageBox
@@ -21,7 +21,7 @@ class Atualizador(QThread):
                 data_hora = datetime.now()
                 data_formatada = data_hora.strftime("%d/%m/%Y %H:%M:%S")
                 self.sinal_atualizar.emit(data_formatada)
-                self.msleep(500)
+                self.msleep(100)
             except Exception as e:
                 print(f"Erro na Thread Atualizador: {e}")
                 self._running = False
@@ -158,6 +158,7 @@ class ExecutaRotinaThread(QThread):
     def parar(self):
         self._running = False
 
+
 class TelaExecucao(QDialog):
     def __init__(self, dado=None, io=None, db=None, rotina=None, nome_prog=None, continuacao=None, db_rotina=None):
         super().__init__()
@@ -274,6 +275,7 @@ class TelaExecucao(QDialog):
         self.execucao_.sinal_execucao.connect(self.thread_execucao)
         self.execucao_.iniciar()
 
+        QApplication.processEvents()  # Mantém a UI responsiva após iniciar as threads
 
     def muda_texto_obj(self, obj_str, text):
         obj_tom_conec = f"{obj_str}"
@@ -356,7 +358,7 @@ class TelaExecucao(QDialog):
             # A Thread AtualizaValor atualiza de x em x ms
             # para que a indicação de tempo atualiza de 1 em 1 s, aplica-se o algoritimo de resto = 0
             self._ofset_temo += 1
-            if (self._ofset_temo % 2) == 0:
+            if (self._ofset_temo % 10) == 0:
                 self.tempo_ciclo += 1
                 self.ui.txTempoCiclos.setText(f"{self.tempo_ciclo} s")
         elif self.em_execucao == False and self._nao_passsou_peca == True:# Se está em execução e peça não passou
@@ -434,6 +436,8 @@ class TelaExecucao(QDialog):
             self._ofset_temo=0
         else:
             self._ofset_temo=0
+
+        QApplication.processEvents()  # Mantém a UI responsiva após iniciar as threads
 
     def indica_cor_teste_condu(self, obj, cor, lado):
         if lado == 0: # Se for esquerdo
@@ -594,7 +598,7 @@ class TelaExecucao(QDialog):
                         self.pausa_execucao()
                         # self.msg.exec(msg="Favor apertar iniciar para ter acesso a peça.")
                         #escrever aqui o liga vermelho da torre
-
+        QApplication.processEvents()  # Mantém a UI responsiva após iniciar as threads
         self._cnt_acionamento_botao=0
 
     # qual_passou = 0 : Passou as duas peças
