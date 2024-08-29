@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>TelaReceitaDireita</class>
+ <widget class="QWidget" name="TelaReceitaDireita">
+  <!-- Propriedades gerais mantidas -->
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1024</width>
+    <height>767</height>
+   </rect>
+  </property>
+  <!-- Widgets existentes mantidos -->
+  <!-- Adicionando novos eletrodos (exemplo para o eletrodo 9) -->
+  <widget class="QLabel" name="lbEletrodo9_D">
+   <property name="geometry">
+    <rect>
+     <x>740</x> <!-- Ajuste conforme necessário -->
+     <y>130</y> <!-- Ajuste conforme necessário -->
+     <width>18</width>
+     <height>18</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(0, 255, 0);</string>
+   </property>
+   <property name="text">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;9&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </widget>
+  <!-- Repetir para eletrodos 10, 11, e 12 -->
+  <!-- Ajustando o QGroupBox para incluir novos botões de rádio -->
+  <widget class="QGroupBox" name="groupBox">
+   <!-- Propriedades do groupBox mantidas -->
+   <!-- Botões de rádio existentes mantidos -->
+   <!-- Adicionando novos botões de rádio (exemplo para o eletrodo 9) -->
+   <widget class="QRadioButton" name="rbtEletrodo9_D">
+    <property name="geometry">
+     <rect>
+      <x>320</x> <!-- Ajuste conforme necessário -->
+      <y>20</y>
+      <width>41</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>9</string>
+    </property>
+   </widget>
+   <!-- Repetir para eletrodos 10, 11, e 12 -->
+  </widget>
+  <!-- Outros widgets mantidos ou ajustados conforme necessário -->
+</widget>
+</ui>

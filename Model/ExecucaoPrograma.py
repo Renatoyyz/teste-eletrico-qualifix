@@ -17,6 +17,7 @@ class Atualizador(QThread):
 
     def run(self):
         while self._running:
+            QApplication.processEvents()  # Mantém a UI responsiva após iniciar as threads
             try:
                 data_hora = datetime.now()
                 data_formatada = data_hora.strftime("%d/%m/%Y %H:%M:%S")
@@ -50,6 +51,7 @@ class ExecutaRotinaThread(QThread):
     def run(self):
         while self._running == True:
             # Emite o sinal para atualizar a interface do usuário
+            QApplication.processEvents()  # Mantém a UI responsiva após iniciar as threads
             try:
                 if self.operacao.em_execucao == True:
                     # Limpa todas as saídas
@@ -57,6 +59,7 @@ class ExecutaRotinaThread(QThread):
                         # self.operacao.rotina.limpa_saidas_esquerda_direita()# Desativa todos os relés por segurança
                         if self.operacao.habili_desbilita_esquerdo == True:
                             self.operacao.qual_teste = self.operacao.TESTE_COND_E
+                            QApplication.processEvents()  # Mantém a UI responsiva após iniciar as threads
                             self.result_condu_e = self.operacao.rotina.esquerdo_direito_condutividade(0)# Testa O lado esquerdo
                             # Verifica condutividade
                             cond = all(c[2] != 0 for c in self.result_condu_e)   
@@ -64,6 +67,7 @@ class ExecutaRotinaThread(QThread):
                                 self.operacao.esquerda_condu_ok = 2 # Sinaliza para execução, que passou
                                 # Se condutividade passou continua testando isolação
                                 self.operacao.qual_teste = self.operacao.TESTE_ISO_E
+                                QApplication.processEvents()  # Mantém a UI responsiva após iniciar as threads
                                 self.result_iso_e = self.operacao.rotina.esquerdo_direito_isolacao(0)# Testa O lado esquerdo
                                 # Verifica isolação
                                 iso = all(i[2] != 1 for i in self.result_iso_e) 
@@ -95,6 +99,7 @@ class ExecutaRotinaThread(QThread):
 
                         if self.operacao.habili_desbilita_direito == True:
                             self.operacao.qual_teste = self.operacao.TESTE_COND_D
+                            QApplication.processEvents()  # Mantém a UI responsiva após iniciar as threads
                             self.result_condu_d = self.operacao.rotina.esquerdo_direito_condutividade(1)# Testa O lado direito
                             # Verifica condutividade
                             cond = all(c[2] != 0 for c in self.result_condu_d)  
@@ -102,6 +107,7 @@ class ExecutaRotinaThread(QThread):
                                 self.operacao.direita_condu_ok = 2 # Sinaliza para execução, que passou
                                 # Se condutividade passou continua testando isolação
                                 self.operacao.qual_teste = self.operacao.TESTE_ISO_D
+                                QApplication.processEvents()  # Mantém a UI responsiva após iniciar as threads
                                 self.result_iso_d = self.operacao.rotina.esquerdo_direito_isolacao(1)# Testa O lado direito
                                 # Verifica isolação
                                 iso = all(i[2] != 1 for i in self.result_iso_d)
@@ -152,6 +158,7 @@ class ExecutaRotinaThread(QThread):
             except Exception as e:
                     print(f"Erro na Thread ExecutaRotina: {e}")
                     self.parar()
+
     def iniciar(self):
         self._running = True
         self.start()
@@ -265,15 +272,15 @@ class TelaExecucao(QDialog):
         self.load_config()
 
     def inicializa_threads(self):
-        # Atualizador Thread
-        self.atualizador = Atualizador(self)
-        self.atualizador.sinal_atualizar.connect(self.thread_atualizar_valor)
-        self.atualizador.iniciar()
-
         # ExecutaRotinaThread
         self.execucao_ = ExecutaRotinaThread(self)
         self.execucao_.sinal_execucao.connect(self.thread_execucao)
         self.execucao_.iniciar()
+
+        # Atualizador Thread
+        self.atualizador = Atualizador(self)
+        self.atualizador.sinal_atualizar.connect(self.thread_atualizar_valor)
+        self.atualizador.iniciar()
 
         QApplication.processEvents()  # Mantém a UI responsiva após iniciar as threads
 
@@ -437,8 +444,6 @@ class TelaExecucao(QDialog):
         else:
             self._ofset_temo=0
 
-        QApplication.processEvents()  # Mantém a UI responsiva após iniciar as threads
-
     def indica_cor_teste_condu(self, obj, cor, lado):
         if lado == 0: # Se for esquerdo
             # Se condições de teste, que é verificado em ExecutaRotinaThread, tiver algum erro, pinta de vermelho
@@ -598,7 +603,6 @@ class TelaExecucao(QDialog):
                         self.pausa_execucao()
                         # self.msg.exec(msg="Favor apertar iniciar para ter acesso a peça.")
                         #escrever aqui o liga vermelho da torre
-        QApplication.processEvents()  # Mantém a UI responsiva após iniciar as threads
         self._cnt_acionamento_botao=0
 
     # qual_passou = 0 : Passou as duas peças
@@ -878,15 +882,16 @@ class TelaExecucao(QDialog):
                 self.ui.lbImgDireito.setEnabled(True)
 
     def inicia_execucao(self):
-        self.rotina.sobe_pistao()
-        self.muda_texto_obj("txNumerosCiclos",self._cnt_ciclos)
-        self.execucao_habilita_desabilita = True# Habilita para executar programa
-        # Desabilita botões que não podem ser acionados durante programa
-        self._desabilita_botoes(False)
-        self.ui.lbAvisos.setVisible(True)
-        self.ui.lbAvisos.setText(self._translate("TelaExecucao", "<html><head/><body><p align=\"center\">Máquina pronta</p></body></html>"))
-        self.ui.lbAvisos.setStyleSheet(f"background-color: rgb({self.VERDE});")
-        self._cnt_acionamento_botao=0
+        if self.execucao_habilita_desabilita == False:
+            self.rotina.sobe_pistao()
+            self.muda_texto_obj("txNumerosCiclos",self._cnt_ciclos)
+            self.execucao_habilita_desabilita = True# Habilita para executar programa
+            # Desabilita botões que não podem ser acionados durante programa
+            self._desabilita_botoes(False)
+            self.ui.lbAvisos.setVisible(True)
+            self.ui.lbAvisos.setText(self._translate("TelaExecucao", "<html><head/><body><p align=\"center\">Máquina pronta</p></body></html>"))
+            self.ui.lbAvisos.setStyleSheet(f"background-color: rgb({self.VERDE});")
+            self._cnt_acionamento_botao=0
 
     def pausa_execucao(self):
         self.execucao_habilita_desabilita = False# desabilita para executar programa
