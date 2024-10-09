@@ -1,11 +1,16 @@
 from PyQt5.QtWidgets import QApplication, QDialog
-from PyQt5.QtCore import Qt, QCoreApplication, QObject, pyqtSignal, QThread, pyqtSlot, QMetaObject, Q_ARG
+from PyQt5.QtCore import QDateTime, Qt, QCoreApplication, QObject, pyqtSignal, QThread, pyqtSlot, QMetaObject, Q_ARG
 from datetime import datetime
 from Controller.Message import MessageBox, SimpleMessageBox
 from Controller.OpenFile import OpenFile
 from View.tela_execucao_programa import Ui_TelaExecucao
 
-from datetime import datetime
+import logging
+
+# Configuração do logging
+logging.basicConfig(filename='execucao_programa.log', level=logging.ERROR,
+                    format='%(asctime)s:%(levelname)s:%(message)s')
+
 
 class Atualizador(QThread):
     sinal_atualizar = pyqtSignal(str)
@@ -19,13 +24,14 @@ class Atualizador(QThread):
         while self._running:
             QApplication.processEvents()  # Mantém a UI responsiva após iniciar as threads
             try:
-                data_hora = datetime.now()
-                data_formatada = data_hora.strftime("%d/%m/%Y %H:%M:%S")
+                data_hora = QDateTime.currentDateTime()
+                data_formatada = data_hora.toString('ddMMyyyy_HHmmss')
                 self.sinal_atualizar.emit(data_formatada)
                 self.msleep(100)
             except Exception as e:
-                print(f"Erro na Thread Atualizador: {e}")
+                logging.error(f"Erro na thread Atualizador: {e}")
                 self._running = False
+            QThread.msleep(100)
 
     def iniciar(self):
         self._running = True
@@ -156,8 +162,10 @@ class ExecutaRotinaThread(QThread):
                 self.msleep(100)  # Cria um atraso de 100 mili segundo
                 # print("ExecutaThread")
             except Exception as e:
-                    print(f"Erro na Thread ExecutaRotina: {e}")
+                    logging.error(f"Erro na thread ExecutaRotinaThread: {e}")
                     self.parar()
+
+            QThread.msleep(100)
 
     def iniciar(self):
         self._running = True
@@ -169,16 +177,19 @@ class ExecutaRotinaThread(QThread):
 class TelaExecucao(QDialog):
     def __init__(self, dado=None, io=None, db=None, rotina=None, nome_prog=None, continuacao=None, db_rotina=None):
         super().__init__()
+        try:
+            self.inicializa_variaveis(dado, io, db, rotina, nome_prog, continuacao, db_rotina)
+            self.inicializa_estados()
+            self.inicializa_cores()
+            self.inicializa_contadores()
+            self.inicializa_testes()
+            self.inicializa_ui()
+            self.inicializa_conexoes()
+            self.carregar_configuracoes()
+            self.inicializa_threads()
+        except Exception as e:
+            logging.error(f"Erro na inicialização da TelaExecucao: {e}")
 
-        self.inicializa_variaveis(dado, io, db, rotina, nome_prog, continuacao, db_rotina)
-        self.inicializa_estados()
-        self.inicializa_cores()
-        self.inicializa_contadores()
-        self.inicializa_testes()
-        self.inicializa_ui()
-        self.inicializa_conexoes()
-        self.carregar_configuracoes()
-        self.inicializa_threads()
 
     def inicializa_variaveis(self, dado, io, db, rotina, nome_prog, continuacao, db_rotina):
         self.dado = dado
@@ -272,17 +283,20 @@ class TelaExecucao(QDialog):
         self.load_config()
 
     def inicializa_threads(self):
-        # ExecutaRotinaThread
-        self.execucao_ = ExecutaRotinaThread(self)
-        self.execucao_.sinal_execucao.connect(self.thread_execucao)
-        self.execucao_.iniciar()
+        try:
+            # ExecutaRotinaThread
+            self.execucao_ = ExecutaRotinaThread(self)
+            self.execucao_.sinal_execucao.connect(self.thread_execucao)
+            self.execucao_.iniciar()
 
-        # Atualizador Thread
-        self.atualizador = Atualizador(self)
-        self.atualizador.sinal_atualizar.connect(self.thread_atualizar_valor)
-        self.atualizador.iniciar()
+            # Atualizador Thread
+            self.atualizador = Atualizador(self)
+            self.atualizador.sinal_atualizar.connect(self.thread_atualizar_valor)
+            self.atualizador.iniciar()
 
-        QApplication.processEvents()  # Mantém a UI responsiva após iniciar as threads
+            QApplication.processEvents()  # Mantém a UI responsiva após iniciar as threads
+        except Exception as e:
+            logging.error(f"Erro na inicialização das threads: {e}")
 
     def muda_texto_obj(self, obj_str, text):
         obj_tom_conec = f"{obj_str}"
@@ -298,151 +312,156 @@ class TelaExecucao(QDialog):
         cur_obj_tom_conec.setStyleSheet(f"background-color: rgb({cor});")
 
     def thread_atualizar_valor(self, data_hora):
-        QMetaObject.invokeMethod(self, "atualiza_valor", Qt.QueuedConnection, Q_ARG(str, data_hora))
-
+        try:
+            QMetaObject.invokeMethod(self, "atualiza_valor", Qt.QueuedConnection, Q_ARG(str, data_hora))
+        except Exception as e:
+            logging.error(f"Erro na thread_atualizar_valor: {e}")
 
     @pyqtSlot(str)
     def atualiza_valor(self, data_hora):
-        self.ui.lbDataHora.setText(self._translate("TelaExecucao", f"<html><head/><body><p align=\"center\">{data_hora}</p></body></html>"))
+        try:
+            self.ui.lbDataHora.setText(self._translate("TelaExecucao", f"<html><head/><body><p align=\"center\">{data_hora}</p></body></html>"))
 
-        # if self.execucao_habilita_desabilita == True  and self._nao_passsou_peca == False:
-        if self.execucao_habilita_desabilita == True and  self.io.io_rpi.bot_acio_e == 0 and self.io.io_rpi.bot_acio_d == 0 and self._nao_passsou_peca == False:
-            self.rotina.apaga_torre()
-            if self._cnt_acionamento_botao < 1:
-                # self.execucao_._running = True
-                # self.execucao_.iniciar()
-                self.rotina.flag_erro_geral = False
-                self._nao_passsou_peca = False
-                self.em_execucao = True
-                self.tempo_ciclo = 0
-                self.muda_texto_obj("txNumerosCiclos",self._cnt_ciclos)
-                self.oscila_cor = False
-                self._carrega_eletrodos(self.rotina.coord_eletrodo_esquerdo, "E")# O 'E' é para formar o texto que criará o objeto lbEletrodo1_E
-                self._carrega_eletrodos(self.rotina.coord_eletrodo_direito, "D")# O 'D' é para formar o texto que criará o objeto lbEletrodo1_D
-                self.ui.lbAvisos.setText(self._translate("TelaExecucao", "<html><head/><body><p align=\"center\">Testando</p></body></html>"))
-                self.ui.lbAvisos.setStyleSheet(f"background-color: rgb({self.VERDE});")
-                self._cnt_acionamento_botao+=1# Incrementa para não passar por aqui novamente
+            if self.execucao_habilita_desabilita == True  and self._nao_passsou_peca == False:
+            # if self.execucao_habilita_desabilita == True and  self.io.io_rpi.bot_acio_e == 0 and self.io.io_rpi.bot_acio_d == 0 and self._nao_passsou_peca == False:
+                self.rotina.apaga_torre()
+                if self._cnt_acionamento_botao < 1:
+                    # self.execucao_._running = True
+                    # self.execucao_.iniciar()
+                    self.rotina.flag_erro_geral = False
+                    self._nao_passsou_peca = False
+                    self.em_execucao = True
+                    self.tempo_ciclo = 0
+                    self.muda_texto_obj("txNumerosCiclos",self._cnt_ciclos)
+                    self.oscila_cor = False
+                    self._carrega_eletrodos(self.rotina.coord_eletrodo_esquerdo, "E")# O 'E' é para formar o texto que criará o objeto lbEletrodo1_E
+                    self._carrega_eletrodos(self.rotina.coord_eletrodo_direito, "D")# O 'D' é para formar o texto que criará o objeto lbEletrodo1_D
+                    self.ui.lbAvisos.setText(self._translate("TelaExecucao", "<html><head/><body><p align=\"center\">Testando</p></body></html>"))
+                    self.ui.lbAvisos.setStyleSheet(f"background-color: rgb({self.VERDE});")
+                    self._cnt_acionamento_botao+=1# Incrementa para não passar por aqui novamente
 
-                # Variáveis para armazenar condicão de condutividade e isolação dos lados esquerdo e direito colocados em condição de não está sendo avaliado
-                # 0 = indica que não está sendo avaliado
-                # 1 = indica que não passou
-                # 2 = indica que passou
-                self.esquerda_condu_ok = 0
-                self.esquerda_iso_ok = 0
-                self.direita_condu_ok = 0
-                self.direita_iso_ok = 0
-            
-        if self.em_execucao == True and self._nao_passsou_peca == False:# Se está em execução e peça passou
+                    # Variáveis para armazenar condicão de condutividade e isolação dos lados esquerdo e direito colocados em condição de não está sendo avaliado
+                    # 0 = indica que não está sendo avaliado
+                    # 1 = indica que não passou
+                    # 2 = indica que passou
+                    self.esquerda_condu_ok = 0
+                    self.esquerda_iso_ok = 0
+                    self.direita_condu_ok = 0
+                    self.direita_iso_ok = 0
+                
+            if self.em_execucao == True and self._nao_passsou_peca == False:# Se está em execução e peça passou
 
-            if self.qual_teste == self.SEM_TESTE:
-                self.indica_cor_teste_condu("lbContinuIndicaE",self.CINZA, 0)
-                self.indica_cor_teste_condu("lbContinuIndicaD",self.CINZA, 1)
-                self.indica_cor_teste_iso("lbIsolaIndicaE",self.CINZA, 0)
-                self.indica_cor_teste_iso("lbIsolaIndicaD",self.CINZA, 1)
-            elif self.qual_teste == self.TESTE_COND_E:
-                self.indica_cor_teste_condu("lbContinuIndicaE",self.VERDE, 0)
-                self.indica_cor_teste_condu("lbContinuIndicaD",self.CINZA, 1)
-                self.indica_cor_teste_iso("lbIsolaIndicaE",self.CINZA, 0)
-                self.indica_cor_teste_iso("lbIsolaIndicaD",self.CINZA, 1)
-            elif self.qual_teste == self.TESTE_COND_D:
-                self.indica_cor_teste_condu("lbContinuIndicaE",self.CINZA, 0)
-                self.indica_cor_teste_condu("lbContinuIndicaD",self.VERDE, 1)
-                self.indica_cor_teste_iso("lbIsolaIndicaE",self.CINZA, 0)
-                self.indica_cor_teste_iso("lbIsolaIndicaD",self.CINZA, 1)
-            elif self.qual_teste == self.TESTE_ISO_E:
-                self.indica_cor_teste_condu("lbContinuIndicaE",self.CINZA, 0)
-                self.indica_cor_teste_condu("lbContinuIndicaD",self.CINZA, 1)
-                self.indica_cor_teste_iso("lbIsolaIndicaE",self.VERDE, 0)
-                self.indica_cor_teste_iso("lbIsolaIndicaD",self.CINZA, 1)
-            elif self.qual_teste == self.TESTE_ISO_D:
-                self.indica_cor_teste_condu("lbContinuIndicaE",self.CINZA, 0)
-                self.indica_cor_teste_condu("lbContinuIndicaD",self.CINZA, 1)
-                self.indica_cor_teste_iso("lbIsolaIndicaE",self.CINZA, 0)
-                self.indica_cor_teste_iso("lbIsolaIndicaD",self.VERDE, 1)
-            
-            self.cor_eletrodo_teste()
+                if self.qual_teste == self.SEM_TESTE:
+                    self.indica_cor_teste_condu("lbContinuIndicaE",self.CINZA, 0)
+                    self.indica_cor_teste_condu("lbContinuIndicaD",self.CINZA, 1)
+                    self.indica_cor_teste_iso("lbIsolaIndicaE",self.CINZA, 0)
+                    self.indica_cor_teste_iso("lbIsolaIndicaD",self.CINZA, 1)
+                elif self.qual_teste == self.TESTE_COND_E:
+                    self.indica_cor_teste_condu("lbContinuIndicaE",self.VERDE, 0)
+                    self.indica_cor_teste_condu("lbContinuIndicaD",self.CINZA, 1)
+                    self.indica_cor_teste_iso("lbIsolaIndicaE",self.CINZA, 0)
+                    self.indica_cor_teste_iso("lbIsolaIndicaD",self.CINZA, 1)
+                elif self.qual_teste == self.TESTE_COND_D:
+                    self.indica_cor_teste_condu("lbContinuIndicaE",self.CINZA, 0)
+                    self.indica_cor_teste_condu("lbContinuIndicaD",self.VERDE, 1)
+                    self.indica_cor_teste_iso("lbIsolaIndicaE",self.CINZA, 0)
+                    self.indica_cor_teste_iso("lbIsolaIndicaD",self.CINZA, 1)
+                elif self.qual_teste == self.TESTE_ISO_E:
+                    self.indica_cor_teste_condu("lbContinuIndicaE",self.CINZA, 0)
+                    self.indica_cor_teste_condu("lbContinuIndicaD",self.CINZA, 1)
+                    self.indica_cor_teste_iso("lbIsolaIndicaE",self.VERDE, 0)
+                    self.indica_cor_teste_iso("lbIsolaIndicaD",self.CINZA, 1)
+                elif self.qual_teste == self.TESTE_ISO_D:
+                    self.indica_cor_teste_condu("lbContinuIndicaE",self.CINZA, 0)
+                    self.indica_cor_teste_condu("lbContinuIndicaD",self.CINZA, 1)
+                    self.indica_cor_teste_iso("lbIsolaIndicaE",self.CINZA, 0)
+                    self.indica_cor_teste_iso("lbIsolaIndicaD",self.VERDE, 1)
+                
+                self.cor_eletrodo_teste()
 
-            # A Thread AtualizaValor atualiza de x em x ms
-            # para que a indicação de tempo atualiza de 1 em 1 s, aplica-se o algoritimo de resto = 0
-            self._ofset_temo += 1
-            if (self._ofset_temo % 10) == 0:
-                self.tempo_ciclo += 1
-                self.ui.txTempoCiclos.setText(f"{self.tempo_ciclo} s")
-        elif self.em_execucao == False and self._nao_passsou_peca == True:# Se está em execução e peça não passou
-            # Habilita botão de descarte ou retrabalho
-            self.ui.btDescartar.setDisabled(False)
-            self.ui.btRetrabalhar.setDisabled(False)
-
-
-            if self._visualiza_condu_e == False and self._visualiza_condu_d == False and self._visualiza_iso_e == False and self._visualiza_iso_d == False:
-                self.ui.lbAvisos.setText(self._translate("TelaExecucao", f"<html><head/><body><p align=\"center\">Erros - Tocar na Tela para visualizar</p></body></html>"))
-                self.ui.lbAvisos.setStyleSheet(f"background-color: rgb({self.VERMELHO});")
-
-            try:
-                if self._visualiza_condu_e == True:
-                    if self._cnt_pagina_erro > len(self.cond_e)-1:
-                        self._cnt_pagina_erro=0
+                # A Thread AtualizaValor atualiza de x em x ms
+                # para que a indicação de tempo atualiza de 1 em 1 s, aplica-se o algoritimo de resto = 0
+                self._ofset_temo += 1
+                if (self._ofset_temo % 10) == 0:
+                    self.tempo_ciclo += 1
+                    self.ui.txTempoCiclos.setText(f"{self.tempo_ciclo} s")
+            elif self.em_execucao == False and self._nao_passsou_peca == True:# Se está em execução e peça não passou
+                # Habilita botão de descarte ou retrabalho
+                self.ui.btDescartar.setDisabled(False)
+                self.ui.btRetrabalhar.setDisabled(False)
 
 
-                    if self.habili_desbilita_esquerdo == True and self.cond_e != []:
-                        self._carrega_eletrodos_esquerdo(self.rotina.coord_eletrodo_esquerdo, self.rotina.condutividade_esquerdo[f"ligacao{self.cond_e[self._cnt_pagina_erro][0]}"][1][0] , -1)
-                        self.muda_cor_obj(f"lbEletrodo{self.rotina.condutividade_esquerdo[f'ligacao{self.cond_e[self._cnt_pagina_erro][0]}'][1][0]}_E",self.VERMELHO)
-                        self.ui.lbAvisos.setText(self._translate("TelaExecucao", f"<html><head/><body><p align=\"center\">Condutor: {self.cond_e[self._cnt_pagina_erro][1]}</p></body></html>"))
-                        self.ui.lbAvisos.setStyleSheet(f"background-color: rgb({self.VERMELHO});")
-                    else:
-                        self.ui.lbAvisos.setText(self._translate("TelaExecucao", f"<html><head/><body><p align=\"center\">Não há erros de condutividade nessa peça</p></body></html>"))
-                        self.ui.lbAvisos.setStyleSheet(f"background-color: rgb({self.VERDE});")
+                if self._visualiza_condu_e == False and self._visualiza_condu_d == False and self._visualiza_iso_e == False and self._visualiza_iso_d == False:
+                    self.ui.lbAvisos.setText(self._translate("TelaExecucao", f"<html><head/><body><p align=\"center\">Erros - Tocar na Tela para visualizar</p></body></html>"))
+                    self.ui.lbAvisos.setStyleSheet(f"background-color: rgb({self.VERMELHO});")
+
+                try:
+                    if self._visualiza_condu_e == True:
+                        if self._cnt_pagina_erro > len(self.cond_e)-1:
+                            self._cnt_pagina_erro=0
 
 
-                if self._visualiza_condu_d == True:
-                    if self._cnt_pagina_erro > len(self.cond_d)-1:
-                        self._cnt_pagina_erro=0
-                    
-
-                    if self.habili_desbilita_direito == True and self.cond_d != []:
-                        self._carrega_eletrodos_direito(self.rotina.coord_eletrodo_direito,self.rotina.condutividade_direito[f"ligacao{self.cond_d[self._cnt_pagina_erro][0]}"][1][0] , -1)
-                        self.muda_cor_obj(f"lbEletrodo{self.rotina.condutividade_direito[f'ligacao{self.cond_d[self._cnt_pagina_erro][0]}'][1][0]}_D",self.VERMELHO)
-                        self.ui.lbAvisos.setText(self._translate("TelaExecucao", f"<html><head/><body><p align=\"center\">Condutor: {self.cond_d[self._cnt_pagina_erro][1]}</p></body></html>"))
-                        self.ui.lbAvisos.setStyleSheet(f"background-color: rgb({self.VERMELHO});")
-                    else:
-                        self.ui.lbAvisos.setText(self._translate("TelaExecucao", f"<html><head/><body><p align=\"center\">Não há erros de condutividade nessa peça</p></body></html>"))
-                        self.ui.lbAvisos.setStyleSheet(f"background-color: rgb({self.VERDE});")
-
-                if self._visualiza_iso_e == True:
-                    if self._cnt_pagina_erro > len(self.iso_e)-1:
-                        self._cnt_pagina_erro=0
-
-                    if self.habili_desbilita_esquerdo == True and self.iso_e != []:
-                        self._carrega_eletrodos_esquerdo(self.rotina.coord_eletrodo_esquerdo,self.rotina.isolacao_esquerdo[f"ligacao{self.iso_e[self._cnt_pagina_erro][0]}"][3],self.rotina.isolacao_esquerdo[f"ligacao{self.iso_e[self._cnt_pagina_erro][0]}"][4])
-                        self.muda_cor_obj(f"lbEletrodo{self.rotina.isolacao_esquerdo[f'ligacao{self.iso_e[self._cnt_pagina_erro][0]}'][3]}_E",self.VERMELHO)
-                        self.muda_cor_obj(f"lbEletrodo{self.rotina.isolacao_esquerdo[f'ligacao{self.iso_e[self._cnt_pagina_erro][0]}'][4]}_E",self.VERMELHO)
-                        self.ui.lbAvisos.setText(self._translate("TelaExecucao", f"<html><head/><body><p align=\"center\">Condutor: {self.iso_e[self._cnt_pagina_erro][1]}</p></body></html>"))
-                        self.ui.lbAvisos.setStyleSheet(f"background-color: rgb({self.VERMELHO});")
-                    else:
-                        self.ui.lbAvisos.setText(self._translate("TelaExecucao", f"<html><head/><body><p align=\"center\">Não há erros de isolação nessa peça</p></body></html>"))
-                        self.ui.lbAvisos.setStyleSheet(f"background-color: rgb({self.VERDE});")
+                        if self.habili_desbilita_esquerdo == True and self.cond_e != []:
+                            self._carrega_eletrodos_esquerdo(self.rotina.coord_eletrodo_esquerdo, self.rotina.condutividade_esquerdo[f"ligacao{self.cond_e[self._cnt_pagina_erro][0]}"][1][0] , -1)
+                            self.muda_cor_obj(f"lbEletrodo{self.rotina.condutividade_esquerdo[f'ligacao{self.cond_e[self._cnt_pagina_erro][0]}'][1][0]}_E",self.VERMELHO)
+                            self.ui.lbAvisos.setText(self._translate("TelaExecucao", f"<html><head/><body><p align=\"center\">Condutor: {self.cond_e[self._cnt_pagina_erro][1]}</p></body></html>"))
+                            self.ui.lbAvisos.setStyleSheet(f"background-color: rgb({self.VERMELHO});")
+                        else:
+                            self.ui.lbAvisos.setText(self._translate("TelaExecucao", f"<html><head/><body><p align=\"center\">Não há erros de condutividade nessa peça</p></body></html>"))
+                            self.ui.lbAvisos.setStyleSheet(f"background-color: rgb({self.VERDE});")
 
 
-                if self._visualiza_iso_d == True:
-                    if self._cnt_pagina_erro > len(self.iso_d)-1:
-                        self._cnt_pagina_erro=0
+                    if self._visualiza_condu_d == True:
+                        if self._cnt_pagina_erro > len(self.cond_d)-1:
+                            self._cnt_pagina_erro=0
+                        
 
-                    if self.habili_desbilita_direito == True and self.iso_d != []:
-                        self._carrega_eletrodos_direito(self.rotina.coord_eletrodo_direito,self.rotina.isolacao_direito[f"ligacao{self.iso_d[self._cnt_pagina_erro][0]}"][3],self.rotina.isolacao_direito[f"ligacao{self.iso_d[self._cnt_pagina_erro][0]}"][4])
-                        self.muda_cor_obj(f"lbEletrodo{self.rotina.isolacao_direito[f'ligacao{self.iso_d[self._cnt_pagina_erro][0]}'][3]}_D",self.VERMELHO)
-                        self.muda_cor_obj(f"lbEletrodo{self.rotina.isolacao_direito[f'ligacao{self.iso_d[self._cnt_pagina_erro][0]}'][4]}_D",self.VERMELHO)
-                        self.ui.lbAvisos.setText(self._translate("TelaExecucao", f"<html><head/><body><p align=\"center\">Condutor: {self.iso_d[self._cnt_pagina_erro][1]}</p></body></html>"))
-                        self.ui.lbAvisos.setStyleSheet(f"background-color: rgb({self.VERMELHO});")
-                    else:
-                        self.ui.lbAvisos.setText(self._translate("TelaExecucao", f"<html><head/><body><p align=\"center\">Não há erros de isolação nessa peça</p></body></html>"))
-                        self.ui.lbAvisos.setStyleSheet(f"background-color: rgb({self.VERDE});")
+                        if self.habili_desbilita_direito == True and self.cond_d != []:
+                            self._carrega_eletrodos_direito(self.rotina.coord_eletrodo_direito,self.rotina.condutividade_direito[f"ligacao{self.cond_d[self._cnt_pagina_erro][0]}"][1][0] , -1)
+                            self.muda_cor_obj(f"lbEletrodo{self.rotina.condutividade_direito[f'ligacao{self.cond_d[self._cnt_pagina_erro][0]}'][1][0]}_D",self.VERMELHO)
+                            self.ui.lbAvisos.setText(self._translate("TelaExecucao", f"<html><head/><body><p align=\"center\">Condutor: {self.cond_d[self._cnt_pagina_erro][1]}</p></body></html>"))
+                            self.ui.lbAvisos.setStyleSheet(f"background-color: rgb({self.VERMELHO});")
+                        else:
+                            self.ui.lbAvisos.setText(self._translate("TelaExecucao", f"<html><head/><body><p align=\"center\">Não há erros de condutividade nessa peça</p></body></html>"))
+                            self.ui.lbAvisos.setStyleSheet(f"background-color: rgb({self.VERDE});")
 
-            except:
-                print("ultrapassou indice de lista")
+                    if self._visualiza_iso_e == True:
+                        if self._cnt_pagina_erro > len(self.iso_e)-1:
+                            self._cnt_pagina_erro=0
 
-            self._ofset_temo=0
-        else:
-            self._ofset_temo=0
+                        if self.habili_desbilita_esquerdo == True and self.iso_e != []:
+                            self._carrega_eletrodos_esquerdo(self.rotina.coord_eletrodo_esquerdo,self.rotina.isolacao_esquerdo[f"ligacao{self.iso_e[self._cnt_pagina_erro][0]}"][3],self.rotina.isolacao_esquerdo[f"ligacao{self.iso_e[self._cnt_pagina_erro][0]}"][4])
+                            self.muda_cor_obj(f"lbEletrodo{self.rotina.isolacao_esquerdo[f'ligacao{self.iso_e[self._cnt_pagina_erro][0]}'][3]}_E",self.VERMELHO)
+                            self.muda_cor_obj(f"lbEletrodo{self.rotina.isolacao_esquerdo[f'ligacao{self.iso_e[self._cnt_pagina_erro][0]}'][4]}_E",self.VERMELHO)
+                            self.ui.lbAvisos.setText(self._translate("TelaExecucao", f"<html><head/><body><p align=\"center\">Condutor: {self.iso_e[self._cnt_pagina_erro][1]}</p></body></html>"))
+                            self.ui.lbAvisos.setStyleSheet(f"background-color: rgb({self.VERMELHO});")
+                        else:
+                            self.ui.lbAvisos.setText(self._translate("TelaExecucao", f"<html><head/><body><p align=\"center\">Não há erros de isolação nessa peça</p></body></html>"))
+                            self.ui.lbAvisos.setStyleSheet(f"background-color: rgb({self.VERDE});")
+
+
+                    if self._visualiza_iso_d == True:
+                        if self._cnt_pagina_erro > len(self.iso_d)-1:
+                            self._cnt_pagina_erro=0
+
+                        if self.habili_desbilita_direito == True and self.iso_d != []:
+                            self._carrega_eletrodos_direito(self.rotina.coord_eletrodo_direito,self.rotina.isolacao_direito[f"ligacao{self.iso_d[self._cnt_pagina_erro][0]}"][3],self.rotina.isolacao_direito[f"ligacao{self.iso_d[self._cnt_pagina_erro][0]}"][4])
+                            self.muda_cor_obj(f"lbEletrodo{self.rotina.isolacao_direito[f'ligacao{self.iso_d[self._cnt_pagina_erro][0]}'][3]}_D",self.VERMELHO)
+                            self.muda_cor_obj(f"lbEletrodo{self.rotina.isolacao_direito[f'ligacao{self.iso_d[self._cnt_pagina_erro][0]}'][4]}_D",self.VERMELHO)
+                            self.ui.lbAvisos.setText(self._translate("TelaExecucao", f"<html><head/><body><p align=\"center\">Condutor: {self.iso_d[self._cnt_pagina_erro][1]}</p></body></html>"))
+                            self.ui.lbAvisos.setStyleSheet(f"background-color: rgb({self.VERMELHO});")
+                        else:
+                            self.ui.lbAvisos.setText(self._translate("TelaExecucao", f"<html><head/><body><p align=\"center\">Não há erros de isolação nessa peça</p></body></html>"))
+                            self.ui.lbAvisos.setStyleSheet(f"background-color: rgb({self.VERDE});")
+
+                except:
+                    print("ultrapassou indice de lista")
+
+                self._ofset_temo=0
+            else:
+                self._ofset_temo=0
+        except Exception as e:
+            logging.error(f"Erro na atualização de valores: {e}")
 
     def indica_cor_teste_condu(self, obj, cor, lado):
         if lado == 0: # Se for esquerdo
@@ -509,40 +528,74 @@ class TelaExecucao(QDialog):
 
     # Método chamado quando finaliza a thread de execução
     def thread_execucao(self, cond_e, iso_e, cond_d, iso_d):
-        QMetaObject.invokeMethod(self, "execucao", Qt.QueuedConnection, 
-                                 Q_ARG(list, cond_e), Q_ARG(list, iso_e), 
-                                 Q_ARG(list, cond_d), Q_ARG(list, iso_d))
+        try:
+            QMetaObject.invokeMethod(self, "execucao", Qt.QueuedConnection, 
+                                    Q_ARG(list, cond_e), Q_ARG(list, iso_e), 
+                                    Q_ARG(list, cond_d), Q_ARG(list, iso_d))
+        except Exception as e:  
+            logging.error(f"Erro na thread_execucao: {e}")
 
     @pyqtSlot(list, list, list, list)
     def execucao(self,  cond_e_, iso_e_, cond_d_, iso_d_):
-        if self.em_execucao == True:
-            self.qual_teste = self.SEM_TESTE
-            self.indica_cor_teste_condu("lbContinuIndicaE",self.CINZA, 0)
-            self.indica_cor_teste_condu("lbContinuIndicaD",self.CINZA, 1)
-            self.indica_cor_teste_iso("lbIsolaIndicaE",self.CINZA, 0)
-            self.indica_cor_teste_iso("lbIsolaIndicaD",self.CINZA, 1)
+        try:
+            if self.em_execucao == True:
+                self.qual_teste = self.SEM_TESTE
+                self.indica_cor_teste_condu("lbContinuIndicaE",self.CINZA, 0)
+                self.indica_cor_teste_condu("lbContinuIndicaD",self.CINZA, 1)
+                self.indica_cor_teste_iso("lbIsolaIndicaE",self.CINZA, 0)
+                self.indica_cor_teste_iso("lbIsolaIndicaD",self.CINZA, 1)
 
-            self.cond_e.clear()
-            self.cond_d.clear()
-            self.iso_e.clear()
-            self.iso_d.clear()
-            print(f"Condutividade esquerdo: {cond_e_}")
-            print(f"Isolação esquerdo: {iso_e_}")
-            print(f"Condutividade direito: {cond_d_}")
-            print(f"Isolação direito: {iso_d_}")
-            self.em_execucao = False
-            
-            # Verifica se peças passaram
-            if self.habili_desbilita_direito == True and self.habili_desbilita_esquerdo == True:# Se ambos os lados estiverem habilitados
-                if cond_e_ != [] and iso_e_ != [] and cond_d_ != [] and iso_d_ != []:
-                    if self._verifica_condutividade_isolacao(cond_e_, iso_e_) == (True,True) and self._verifica_condutividade_isolacao(cond_d_, iso_d_) == (True,True):
-                        self._carrega_peca_passou(0)
-                        #escrever aqui o liga verde da torre
+                self.cond_e.clear()
+                self.cond_d.clear()
+                self.iso_e.clear()
+                self.iso_d.clear()
+                print(f"Condutividade esquerdo: {cond_e_}")
+                print(f"Isolação esquerdo: {iso_e_}")
+                print(f"Condutividade direito: {cond_d_}")
+                print(f"Isolação direito: {iso_d_}")
+                self.em_execucao = False
+                
+                # Verifica se peças passaram
+                if self.habili_desbilita_direito == True and self.habili_desbilita_esquerdo == True:# Se ambos os lados estiverem habilitados
+                    if cond_e_ != [] and iso_e_ != [] and cond_d_ != [] and iso_d_ != []:
+                        if self._verifica_condutividade_isolacao(cond_e_, iso_e_) == (True,True) and self._verifica_condutividade_isolacao(cond_d_, iso_d_) == (True,True):
+                            self._carrega_peca_passou(0)
+                            #escrever aqui o liga verde da torre
 
-                    else:# Verifica qual dos dois não passaram
+                        else:# Verifica qual dos dois não passaram
 
+                            if self._verifica_condutividade_isolacao(cond_e_, iso_e_) == (True,True):
+                                self._carrega_peca_passou(1)# passou a esquerda habilitada
+                            else:
+                                # passa para as variáveis somente o que não passou 
+                                for i in cond_e_:
+                                    if i[2] == 0:
+                                        self.cond_e.append(i)
+                                for i in iso_e_:
+                                    if i[2] == 1:
+                                        self.iso_e.append(i)
+                            if self._verifica_condutividade_isolacao(cond_d_, iso_d_) == (True,True):
+                                self._carrega_peca_passou(2)# passou a direita habilitada
+                            else:
+                                # passa para as variáveis somente o que não passou 
+                                for i in cond_d_:
+                                    if i[2] == 0:
+                                        self.cond_d.append(i)
+                                for i in iso_d_:
+                                    if i[2] == 1:
+                                        self.iso_d.append(i)
+                            self.pausa_execucao()
+                            # self.msg.exec(msg="Favor apertar iniciar para ter acesso a peça.")
+
+                            self._nao_passsou_peca = True
+
+                            #escrever aqui o liga Vermelho da torre
+
+                elif self.habili_desbilita_direito == False and self.habili_desbilita_esquerdo == True:# Se só esquerdo estiver habilitado
+                    if cond_e_ != [] and iso_e_ != []:
                         if self._verifica_condutividade_isolacao(cond_e_, iso_e_) == (True,True):
-                            self._carrega_peca_passou(1)# passou a esquerda habilitada
+                            self._carrega_peca_passou(1)
+                            #escrever aqui o liga verde da torre
                         else:
                             # passa para as variáveis somente o que não passou 
                             for i in cond_e_:
@@ -551,59 +604,31 @@ class TelaExecucao(QDialog):
                             for i in iso_e_:
                                 if i[2] == 1:
                                     self.iso_e.append(i)
+                            self._nao_passsou_peca = True
+                            self.pausa_execucao()
+                            # self.msg.exec(msg="Favor apertar iniciar para ter acesso a peça.")
+                            #escrever aqui o liga vermelha da torre
+
+                elif self.habili_desbilita_direito == True and self.habili_desbilita_esquerdo == False:# Se só direito estiver habilitado
+                    if cond_d_ != [] and iso_d_ != []:
                         if self._verifica_condutividade_isolacao(cond_d_, iso_d_) == (True,True):
-                            self._carrega_peca_passou(2)# passou a direita habilitada
+                            self._carrega_peca_passou(2)
+                            #escrever aqui o liga verde da torre
                         else:
-                            # passa para as variáveis somente o que não passou 
+                            # passa para as variáveis somente o que não passou
                             for i in cond_d_:
                                 if i[2] == 0:
                                     self.cond_d.append(i)
                             for i in iso_d_:
                                 if i[2] == 1:
                                     self.iso_d.append(i)
-                        self.pausa_execucao()
-                        # self.msg.exec(msg="Favor apertar iniciar para ter acesso a peça.")
-
-                        self._nao_passsou_peca = True
-
-                        #escrever aqui o liga Vermelho da torre
-
-            elif self.habili_desbilita_direito == False and self.habili_desbilita_esquerdo == True:# Se só esquerdo estiver habilitado
-                if cond_e_ != [] and iso_e_ != []:
-                    if self._verifica_condutividade_isolacao(cond_e_, iso_e_) == (True,True):
-                        self._carrega_peca_passou(1)
-                        #escrever aqui o liga verde da torre
-                    else:
-                        # passa para as variáveis somente o que não passou 
-                        for i in cond_e_:
-                            if i[2] == 0:
-                                self.cond_e.append(i)
-                        for i in iso_e_:
-                            if i[2] == 1:
-                                self.iso_e.append(i)
-                        self._nao_passsou_peca = True
-                        self.pausa_execucao()
-                        # self.msg.exec(msg="Favor apertar iniciar para ter acesso a peça.")
-                        #escrever aqui o liga vermelha da torre
-
-            elif self.habili_desbilita_direito == True and self.habili_desbilita_esquerdo == False:# Se só direito estiver habilitado
-                if cond_d_ != [] and iso_d_ != []:
-                    if self._verifica_condutividade_isolacao(cond_d_, iso_d_) == (True,True):
-                        self._carrega_peca_passou(2)
-                        #escrever aqui o liga verde da torre
-                    else:
-                        # passa para as variáveis somente o que não passou
-                        for i in cond_d_:
-                            if i[2] == 0:
-                                self.cond_d.append(i)
-                        for i in iso_d_:
-                            if i[2] == 1:
-                                self.iso_d.append(i)
-                        self._nao_passsou_peca = True
-                        self.pausa_execucao()
-                        # self.msg.exec(msg="Favor apertar iniciar para ter acesso a peça.")
-                        #escrever aqui o liga vermelho da torre
-        self._cnt_acionamento_botao=0
+                            self._nao_passsou_peca = True
+                            self.pausa_execucao()
+                            # self.msg.exec(msg="Favor apertar iniciar para ter acesso a peça.")
+                            #escrever aqui o liga vermelho da torre
+            self._cnt_acionamento_botao=0
+        except Exception as e:  
+            logging.error(f"Erro na execução: {e}")
 
     # qual_passou = 0 : Passou as duas peças
     #               1 : Passou só a esquerda habilitada
@@ -753,7 +778,7 @@ class TelaExecucao(QDialog):
                 self._nome_rotina_execucao = self.db_rotina[1]
             else:
                 # formata nome da rotina
-                self._nome_rotina_execucao = f"{self.rotina.nome_programa}${datetime.now().strftime('%d%m%Y_%H%M%S')}"
+                self._nome_rotina_execucao = f"{self.rotina.nome_programa}${QDateTime.currentDateTime().toString('ddMMyyyy_HHmmss')}"
 
             
             # Carrega as duas imagens
@@ -1100,8 +1125,8 @@ class TelaExecucao(QDialog):
                                                     int(self.ui.txReprovadoD.text()),
                                                     int(self.ui.txRetrabalhoE.text()),
                                                     int(self.ui.txRetrabalhoD.text()),
-                                                    datetime.now(),
-                                                    datetime.now(),
+                                                    QDateTime.currentDateTime(),
+                                                    QDateTime.currentDateTime(),
                                                     self.dado.nome_login,
                                                     0,# Zero indica que não terminou rotina
                                                     int(self.ui.txNumerosCiclos.text())
@@ -1128,7 +1153,7 @@ class TelaExecucao(QDialog):
                                                                         int(self.ui.txReprovadoD.text()),
                                                                         int(self.ui.txRetrabalhoE.text()),
                                                                         int(self.ui.txRetrabalhoD.text()),
-                                                                        datetime.now(),#Data de finalização
+                                                                        QDateTime.currentDateTime(),#Data de finalização
                                                                         self.dado.nome_login,
                                                                         1,# Um indica terminou rotina
                                                                         int(self.ui.txNumerosCiclos.text())

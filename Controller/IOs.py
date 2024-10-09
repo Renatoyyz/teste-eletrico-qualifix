@@ -121,7 +121,7 @@ class IO_MODBUS:
         self.valor_saida_geral = 0
         self.valor_saida_geral2 = 0
 
-        self.fake_modbus = False
+        self.fake_modbus = True
 
         self.entradas_wp8026 = {
             "in_1": 0,
@@ -273,12 +273,12 @@ class IO_MODBUS:
                 # Repete-se os comandos em decimal com os devidos bytes de CRC
                 self.ser.write([adr,0x0f,0,0,0,16,2,out_val_l,out_val_h,parte_inferior,parte_superior])
                 # self.ser.flush()
-                start_time = time.time()
+                # start_time = time.time()
 
                 while not self.ser.readable():
-                    if time.time() - start_time > self.ser.timeout:
-                        print("Timeout: Nenhuma resposta do escravo.")
-                        break
+                    # if time.time() - start_time > self.ser.timeout:
+                    #     print("Timeout: Nenhuma resposta do escravo.")
+                    #     break
                     time.sleep(0.1)  # Aguarde um curto período antes de verificar novamente
 
                 dados_recebidos = self.ser.read(8)
@@ -336,11 +336,11 @@ class IO_MODBUS:
                     # Repete-se os comandos em decimal com os devidos bytes de CRC
                     self.ser.write([adr,2,0,0,0,16,parte_inferior, parte_superior])
                     # self.ser.flush()
-                    start_time = time.time()
+                    # start_time = time.time()
                     while not self.ser.readable():
-                        if time.time() - start_time > self.ser.timeout:
-                            print("Timeout: Nenhuma resposta do escravo.")
-                            return -1
+                        # if time.time() - start_time > self.ser.timeout:
+                        #     print("Timeout: Nenhuma resposta do escravo.")
+                        #     return -1
                         time.sleep(0.1)  # Aguarde um curto período antes de verificar novamente
                     dados_recebidos = self.ser.read(7)
                     self.ser.flushInput()  # Limpa o buffer de entrada após a leitura
