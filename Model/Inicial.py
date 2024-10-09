@@ -72,5 +72,5 @@ class TelaInicial(QMainWindow):
         event.accept()
 
     def setfoccus(self, event):
-        if self.io.io_rpi.bot_acio_d == 1:
+        if self.io.io_rpi.bot_acio_d == 0:
             self.close()

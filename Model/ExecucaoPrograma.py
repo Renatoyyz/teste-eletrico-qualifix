@@ -322,8 +322,8 @@ class TelaExecucao(QDialog):
         try:
             self.ui.lbDataHora.setText(self._translate("TelaExecucao", f"<html><head/><body><p align=\"center\">{data_hora}</p></body></html>"))
 
-            if self.execucao_habilita_desabilita == True  and self._nao_passsou_peca == False:
-            # if self.execucao_habilita_desabilita == True and  self.io.io_rpi.bot_acio_e == 0 and self.io.io_rpi.bot_acio_d == 0 and self._nao_passsou_peca == False:
+            # if self.execucao_habilita_desabilita == True  and self._nao_passsou_peca == False:
+            if self.execucao_habilita_desabilita == True and  self.io.io_rpi.bot_acio_e == 0 and self.io.io_rpi.bot_acio_d == 0 and self._nao_passsou_peca == False:
                 self.rotina.apaga_torre()
                 if self._cnt_acionamento_botao < 1:
                     # self.execucao_._running = True
