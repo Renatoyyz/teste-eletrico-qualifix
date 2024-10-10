@@ -25,7 +25,7 @@ class Atualizador(QThread):
             QApplication.processEvents()  # Mantém a UI responsiva após iniciar as threads
             try:
                 data_hora = QDateTime.currentDateTime()
-                data_formatada = data_hora.toString('ddMMyyyy_HHmmss')
+                data_formatada = data_hora.toString('dd/MM/yyyy HH:mm:ss')
                 self.sinal_atualizar.emit(data_formatada)
                 self.msleep(100)
             except Exception as e:
@@ -382,7 +382,7 @@ class TelaExecucao(QDialog):
                 # A Thread AtualizaValor atualiza de x em x ms
                 # para que a indicação de tempo atualiza de 1 em 1 s, aplica-se o algoritimo de resto = 0
                 self._ofset_temo += 1
-                if (self._ofset_temo % 10) == 0:
+                if (self._ofset_temo % 5) == 0:
                     self.tempo_ciclo += 1
                     self.ui.txTempoCiclos.setText(f"{self.tempo_ciclo} s")
             elif self.em_execucao == False and self._nao_passsou_peca == True:# Se está em execução e peça não passou
