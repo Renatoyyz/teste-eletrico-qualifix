@@ -31,7 +31,7 @@ class Atualizador(QThread):
             except Exception as e:
                 logging.error(f"Erro na thread Atualizador: {e}")
                 self._running = False
-            QThread.msleep(100)
+            self.msleep(100)
 
     def iniciar(self):
         self._running = True
@@ -65,7 +65,6 @@ class ExecutaRotinaThread(QThread):
                         # self.operacao.rotina.limpa_saidas_esquerda_direita()# Desativa todos os relés por segurança
                         if self.operacao.habili_desbilita_esquerdo == True:
                             self.operacao.qual_teste = self.operacao.TESTE_COND_E
-                            QApplication.processEvents()  # Mantém a UI responsiva após iniciar as threads
                             self.result_condu_e = self.operacao.rotina.esquerdo_direito_condutividade(0)# Testa O lado esquerdo
                             # Verifica condutividade
                             cond = all(c[2] != 0 for c in self.result_condu_e)   
@@ -73,7 +72,6 @@ class ExecutaRotinaThread(QThread):
                                 self.operacao.esquerda_condu_ok = 2 # Sinaliza para execução, que passou
                                 # Se condutividade passou continua testando isolação
                                 self.operacao.qual_teste = self.operacao.TESTE_ISO_E
-                                QApplication.processEvents()  # Mantém a UI responsiva após iniciar as threads
                                 self.result_iso_e = self.operacao.rotina.esquerdo_direito_isolacao(0)# Testa O lado esquerdo
                                 # Verifica isolação
                                 iso = all(i[2] != 1 for i in self.result_iso_e) 
@@ -98,14 +96,13 @@ class ExecutaRotinaThread(QThread):
                                 self.esquerda_ok = False
 
                             # garante que todas os eletrodos fiquem verdes para ser tocados depois
-                            self.operacao._carrega_eletrodos(self.operacao.rotina.coord_eletrodo_esquerdo, "E")# O 'E' é para formar o texto que criará o objeto lbEletrodo1_E   
+                            # self.operacao._carrega_eletrodos(self.operacao.rotina.coord_eletrodo_esquerdo, "E")# O 'E' é para formar o texto que criará o objeto lbEletrodo1_E   
                         else:
                             self.esquerda_ok = True # Se Lado esquerdo não foi escolhido, sinaliza como ok para poder 
                                                     # continuar com o lado direito
 
                         if self.operacao.habili_desbilita_direito == True:
                             self.operacao.qual_teste = self.operacao.TESTE_COND_D
-                            QApplication.processEvents()  # Mantém a UI responsiva após iniciar as threads
                             self.result_condu_d = self.operacao.rotina.esquerdo_direito_condutividade(1)# Testa O lado direito
                             # Verifica condutividade
                             cond = all(c[2] != 0 for c in self.result_condu_d)  
@@ -113,7 +110,6 @@ class ExecutaRotinaThread(QThread):
                                 self.operacao.direita_condu_ok = 2 # Sinaliza para execução, que passou
                                 # Se condutividade passou continua testando isolação
                                 self.operacao.qual_teste = self.operacao.TESTE_ISO_D
-                                QApplication.processEvents()  # Mantém a UI responsiva após iniciar as threads
                                 self.result_iso_d = self.operacao.rotina.esquerdo_direito_isolacao(1)# Testa O lado direito
                                 # Verifica isolação
                                 iso = all(i[2] != 1 for i in self.result_iso_d)
@@ -137,7 +133,7 @@ class ExecutaRotinaThread(QThread):
                             else:
                                 self.direita_ok = False
                             # garante que todas os eletrodos fiquem verdes para ser tocados depois
-                            self.operacao._carrega_eletrodos(self.operacao.rotina.coord_eletrodo_direito, "D")# O 'D' é para formar o texto que criará o objeto lbEletrodo1_D
+                            # self.operacao._carrega_eletrodos(self.operacao.rotina.coord_eletrodo_direito, "D")# O 'D' é para formar o texto que criará o objeto lbEletrodo1_D
                         else:
                             self.direita_ok = True # Se Lado direito não foi escolhido, sinaliza como ok para poder 
                                                     # continuar com o lado esquerdo    
@@ -165,7 +161,7 @@ class ExecutaRotinaThread(QThread):
                     logging.error(f"Erro na thread ExecutaRotinaThread: {e}")
                     self.parar()
 
-            QThread.msleep(100)
+            self.msleep(100)
 
     def iniciar(self):
         self._running = True

@@ -314,7 +314,8 @@ class IO_MODBUS:
         if self.fake_modbus == False:
             return self.wp_8026_(adr=adr, input=input)
         else:
-            return random.randint(0,1)
+            # return random.randint(0,1)
+            return 1 if input == 8  else 0
     def wp_8026_(self, adr, input):
         dados_recebidos = None
 
