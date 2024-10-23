@@ -29,8 +29,8 @@ class RotinaPrg:
 
         self.TEMPO_DESCIDA_PISTAO = 1500
         self.TEMPO_SUBIDA_PISTAO = 100
-        self.TEMPO_ACIONAMENTO_RELE = 100
-        self.TEMPO_ACIONAMENTO_RELE_ISO = 450
+        self.TEMPO_ACIONAMENTO_RELE = 25
+        self.TEMPO_ACIONAMENTO_RELE_ISO = 100
 
         self.dado=dado
         self.io=io
@@ -288,9 +288,7 @@ class RotinaPrg:
             self.eletrodo_testando_condu_e[0]=0
             self.eletrodo_testando_condu_e[1]=0
             # Depois de conferido a isolação pelo megômetro, reseta relé que liga entrada
-            self.io.wp_8027(self.io.ADR_3,8,1)
-            time.sleep(0.2)
-            self.io.wp_8027(self.io.ADR_3,8,0)
+            self.reset_rele_isolacao()
             return result
 
         elif lado == 1: # Corresponde ao lado direito
@@ -302,9 +300,7 @@ class RotinaPrg:
             self.eletrodo_testando_condu_d[0]=0
             self.eletrodo_testando_condu_d[1]=0
             # Depois de conferido a isolação pelo megômetro, reseta relé que liga entrada
-            self.io.wp_8027(self.io.ADR_3,8,1)
-            time.sleep(0.2)
-            self.io.wp_8027(self.io.ADR_3,8,0)
+            self.reset_rele_isolacao()
             return result
 
     """
@@ -332,7 +328,7 @@ class RotinaPrg:
                 self.io.wp_8027(self.io.ADR_1,self.condutividade_esquerdo[f"ligacao{i}"][2]+8,1)
 
                 # Aguarda um pequeno tempo para acionamento do rele
-                if self.sleep_check_erro(self.TEMPO_ACIONAMENTO_RELE_ISO) == False:
+                if self.sleep_check_erro(self.TEMPO_ACIONAMENTO_RELE) == False:
 
                     # faz leitura e associa a variável
                     # índice 0 = número da ligação índice 1 = Nome da ligação índice 2 = status de ligaçao - 0=não passou 1=passou
@@ -368,7 +364,7 @@ class RotinaPrg:
                 self.io.wp_8027(self.io.ADR_2,self.condutividade_direito[f"ligacao{i}"][2]+8,1)
 
                 # Aguarda um pequeno tempo para acionamento do rele
-                if self.sleep_check_erro(self.TEMPO_ACIONAMENTO_RELE_ISO) == False:
+                if self.sleep_check_erro(self.TEMPO_ACIONAMENTO_RELE) == False:
 
                     # faz leitura e associa a variável
                     # índice 0 = número da ligação índice 1 = Nome da ligação índice = status de ligaçao - 0=não passou 1=passou
@@ -411,9 +407,7 @@ class RotinaPrg:
                 self.io.wp_8027(self.io.ADR_4,1,1)
 
                 # Reseta relé que liga entrada de mêgometro atuado
-                self.io.wp_8027(self.io.ADR_3,8,1)
-                time.sleep(0.1)
-                self.io.wp_8027(self.io.ADR_3,8,0)
+                self.reset_rele_isolacao()
             
                 # self.start_megometro()
 
@@ -460,9 +454,7 @@ class RotinaPrg:
                 self.io.wp_8027(self.io.ADR_4,1,1)
 
                 # Reseta relé que liga entrada de mêgometro atuado
-                self.io.wp_8027(self.io.ADR_3,8,1)
-                time.sleep(0.1)
-                self.io.wp_8027(self.io.ADR_3,8,0)
+                self.reset_rele_isolacao()
 
                 # self.start_megometro()
                 result = self.combinacao_isolacao_direito()
@@ -492,7 +484,7 @@ class RotinaPrg:
     def start_megometro(self):
         # Garante o Stop do megômetro - pulso
         self.io.wp_8027(self.io.ADR_3, 6, 1)# liga
-        time.sleep(0.3)
+        time.sleep(0.1)
         self.io.wp_8027(self.io.ADR_3, 6, 0)# desliga
 
     def stop_megometro(self):
@@ -509,6 +501,11 @@ class RotinaPrg:
 
     def apaga_torre(self):
         self.io.io_rpi.desliga_torre()
+
+    def reset_rele_isolacao(self):
+        self.io.wp_8027(self.io.ADR_3,8,1)
+        time.sleep(0.1)
+        self.io.wp_8027(self.io.ADR_3,8,0)
     
     def esquerdo_direito_isolacao(self, lado):
         result = []
@@ -523,9 +520,7 @@ class RotinaPrg:
             self.io.wp_8027(self.io.ADR_4,1,1)
 
             # Reseta relé que liga entrada de mêgometro atuado
-            self.io.wp_8027(self.io.ADR_3,8,1)
-            time.sleep(0.1)
-            self.io.wp_8027(self.io.ADR_3,8,0)
+            self.reset_rele_isolacao()
         
             # self.start_megometro()
             result = self.combinacao_isolacao_esquerdo()
@@ -549,9 +544,7 @@ class RotinaPrg:
             self.io.wp_8027(self.io.ADR_4,1,1)
 
             # Reseta relé que liga entrada de mêgometro atuado
-            self.io.wp_8027(self.io.ADR_3,8,1)
-            time.sleep(0.1)
-            self.io.wp_8027(self.io.ADR_3,8,0)
+            self.reset_rele_isolacao()
 
             # self.start_megometro()
             result = self.combinacao_isolacao_direito()
@@ -578,8 +571,7 @@ class RotinaPrg:
     def combinacao_isolacao_esquerdo(self):
         result = []
         # Depois de conferido a isolação pelo megômetro, reseta relé que liga entrada
-        self.io.wp_8027(self.io.ADR_3,8,0)
-        time.sleep(0.1)
+        self.reset_rele_isolacao()
 
         for i in range(1,17):
             if self.isolacao_esquerdo[f"ligacao{i}"][2] != "":
@@ -598,7 +590,7 @@ class RotinaPrg:
                 self.start_megometro()
 
                 # Aguarda um pequeno tempo para acionamento do rele que é setado pelo sensor ótico
-                if self.sleep_check_erro(self.TEMPO_ACIONAMENTO_RELE) == False:
+                if self.sleep_check_erro(self.TEMPO_ACIONAMENTO_RELE_ISO) == False:
                     # faz leitura e associa a variável
                     # índice 0 = número da ligação / índice 1 = Nome da ligação / índice 2 = status de ligaçao - 0=passou 1=não passou
                     result.append( [i,self.isolacao_esquerdo[f"ligacao{i}"][2],self.io.wp_8026(self.io.ADR_3, 1)] )
@@ -609,8 +601,7 @@ class RotinaPrg:
                     self.stop_megometro()
 
                     # Depois de conferido a isolação pelo megômetro, reseta relé que liga entrada
-                    self.io.wp_8027(self.io.ADR_3,8,0)
-                    time.sleep(0.2)
+                    self.reset_rele_isolacao()
 
                     # desliga saída para não conflitar com o próximo
                     self.io.wp_8027(self.io.ADR_1,self.isolacao_esquerdo[f"ligacao{i}"][0],0)
@@ -641,8 +632,7 @@ class RotinaPrg:
         result = []
 
         # Depois de conferido a isolação pelo megômetro, reseta relé que liga entrada
-        self.io.wp_8027(self.io.ADR_3,8,0)
-        time.sleep(0.1)
+        self.reset_rele_isolacao()
 
         for i in range(1,17):
             if self.isolacao_direito[f"ligacao{i}"][2] != "":
@@ -656,7 +646,7 @@ class RotinaPrg:
                 self.start_megometro()
 
                 # Aguarda um pequeno tempo para acionamento do rele que é setado pelo sensor ótico
-                if self.sleep_check_erro(self.TEMPO_ACIONAMENTO_RELE) == False:
+                if self.sleep_check_erro(self.TEMPO_ACIONAMENTO_RELE_ISO) == False:
 
 
                     # faz leitura e associa a variável
@@ -669,8 +659,7 @@ class RotinaPrg:
                     self.stop_megometro()
 
                     # Depois de conferido a isolação pelo megômetro, reseta relé que liga entrada
-                    self.io.wp_8027(self.io.ADR_3,8,0)
-                    time.sleep(0.2)
+                    self.reset_rele_isolacao()
 
                     # desliga saída para não conflitar com o próximo
                     self.io.wp_8027(self.io.ADR_2,self.isolacao_direito[f"ligacao{i}"][0],0)
