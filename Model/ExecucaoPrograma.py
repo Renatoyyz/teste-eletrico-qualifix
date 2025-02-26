@@ -320,6 +320,7 @@ class TelaExecucao(QDialog):
 
             # if self.execucao_habilita_desabilita == True  and self._nao_passsou_peca == False:
             if self.execucao_habilita_desabilita == True and  self.io.io_rpi.bot_acio_e == 0 and self.io.io_rpi.bot_acio_d == 0 and self._nao_passsou_peca == False:
+            # if self.execucao_habilita_desabilita == True and self.io.io_rpi.bot_acio_d == 0 and self._nao_passsou_peca == False:
                 self.rotina.apaga_torre()
                 if self._cnt_acionamento_botao < 1:
                     # self.execucao_._running = True
@@ -925,28 +926,28 @@ class TelaExecucao(QDialog):
         self._cnt_acionamento_botao=0
 
     def para_execucao(self):
-        self.msg_box.exec(msg="Deseja realmente encerar rotina?")
-        if self.msg_box.yes_no == True:
-            self.salva_rotina(finalizado=True)
-            self._nao_passsou_peca = False# Flag de peça não passo habilitada para novo teste
-            self._desabilita_botoes(False)
-            self.ui.lbAvisos.setVisible(True)
-            self.ui.lbAvisos.setText(self._translate("TelaExecucao", "<html><head/><body><p align=\"center\">Máquina pronta</p></body></html>"))
-            self.ui.lbAvisos.setStyleSheet(f"background-color: rgb({self.VERDE});")
-            self._cnt_acionamento_botao=0
-            self.ui.btDescartar.setDisabled(True)# Volta a desabilitar esse botão
-            self.ui.btRetrabalhar.setDisabled(True)# Volta a desabilitar esse botão
-            self.ui.lbContinuIndicaE.setStyleSheet(f"background-color: rgb({self.CINZA});")
-            self.ui.lbContinuIndicaD.setStyleSheet(f"background-color: rgb({self.CINZA});")
-            self.ui.lbIsolaIndicaE.setStyleSheet(f"background-color: rgb({self.CINZA});")
-            self.ui.lbIsolaIndicaD.setStyleSheet(f"background-color: rgb({self.CINZA});")
-            self._visualiza_condu_e = False
-            self._visualiza_condu_d = False
-            self._visualiza_iso_e = False
-            self._visualiza_iso_d = False
-            self._retrabalho = True
-            self.rotina_iniciada = False
-            self.close()
+        #self.msg_box.exec(msg="Deseja realmente encerar rotina?")
+        #if self.msg_box.yes_no == True:
+        self.salva_rotina(finalizado=True)
+        self._nao_passsou_peca = False# Flag de peça não passo habilitada para novo teste
+        self._desabilita_botoes(False)
+        self.ui.lbAvisos.setVisible(True)
+        self.ui.lbAvisos.setText(self._translate("TelaExecucao", "<html><head/><body><p align=\"center\">Máquina pronta</p></body></html>"))
+        self.ui.lbAvisos.setStyleSheet(f"background-color: rgb({self.VERDE});")
+        self._cnt_acionamento_botao=0
+        self.ui.btDescartar.setDisabled(True)# Volta a desabilitar esse botão
+        self.ui.btRetrabalhar.setDisabled(True)# Volta a desabilitar esse botão
+        self.ui.lbContinuIndicaE.setStyleSheet(f"background-color: rgb({self.CINZA});")
+        self.ui.lbContinuIndicaD.setStyleSheet(f"background-color: rgb({self.CINZA});")
+        self.ui.lbIsolaIndicaE.setStyleSheet(f"background-color: rgb({self.CINZA});")
+        self.ui.lbIsolaIndicaD.setStyleSheet(f"background-color: rgb({self.CINZA});")
+        self._visualiza_condu_e = False
+        self._visualiza_condu_d = False
+        self._visualiza_iso_e = False
+        self._visualiza_iso_d = False
+        self._retrabalho = True
+        self.rotina_iniciada = False
+        self.close()
         # self.execucao_habilita_desabilita = False# desabilita para executar programa
         # self.em_execucao = False
         # self.rotina.flag_erro_geral = True
@@ -1109,53 +1110,54 @@ class TelaExecucao(QDialog):
         self.ui.btContato.setEnabled(hab_dasab)
 
     def salva_rotina(self, finalizado=False):
-        try:
-            if finalizado == False:
+        pass
+        # try:
+            # if finalizado == False:
 
-                if self.rotina_iniciada == False:# Se for a primeira vez
-                    self.rotina_iniciada = True # Sinaliza variável que indica que já foi gravado
-                    self.database.create_record_rotina(self._nome_rotina_execucao,
-                                                    int(self.ui.txAprovadoE.text()),
-                                                    int(self.ui.txAprovadoD.text()),
-                                                    int(self.ui.txReprovadoE.text()),
-                                                    int(self.ui.txReprovadoD.text()),
-                                                    int(self.ui.txRetrabalhoE.text()),
-                                                    int(self.ui.txRetrabalhoD.text()),
-                                                    QDateTime.currentDateTime(),
-                                                    QDateTime.currentDateTime(),
-                                                    self.dado.nome_login,
-                                                    0,# Zero indica que não terminou rotina
-                                                    int(self.ui.txNumerosCiclos.text())
-                                                    )
-                else:
-                    self.database.update_record_rotina_by_name_sem_data(self._nome_rotina_execucao,
-                                                                        self._nome_rotina_execucao,
-                                                                        int(self.ui.txAprovadoE.text()),
-                                                                        int(self.ui.txAprovadoD.text()),
-                                                                        int(self.ui.txReprovadoE.text()),
-                                                                        int(self.ui.txReprovadoD.text()),
-                                                                        int(self.ui.txRetrabalhoE.text()),
-                                                                        int(self.ui.txRetrabalhoD.text()),
-                                                                        self.dado.nome_login,
-                                                                        0,# Zero indica que não terminou rotina
-                                                                        int(self.ui.txNumerosCiclos.text())
-                                                                    )
-            else:
-                self.database.update_record_rotina_by_name_finalizado(self._nome_rotina_execucao,
-                                                                        self._nome_rotina_execucao,
-                                                                        int(self.ui.txAprovadoE.text()),
-                                                                        int(self.ui.txAprovadoD.text()),
-                                                                        int(self.ui.txReprovadoE.text()),
-                                                                        int(self.ui.txReprovadoD.text()),
-                                                                        int(self.ui.txRetrabalhoE.text()),
-                                                                        int(self.ui.txRetrabalhoD.text()),
-                                                                        QDateTime.currentDateTime(),#Data de finalização
-                                                                        self.dado.nome_login,
-                                                                        1,# Um indica terminou rotina
-                                                                        int(self.ui.txNumerosCiclos.text())
-                                                                    )
-        except:
-            print("Erro em salvar_rotina(), banco de dados")
+                # if self.rotina_iniciada == False:# Se for a primeira vez
+                    # self.rotina_iniciada = True # Sinaliza variável que indica que já foi gravado
+                    # self.database.create_record_rotina(self._nome_rotina_execucao,
+                                                    # int(self.ui.txAprovadoE.text()),
+                                                    # int(self.ui.txAprovadoD.text()),
+                                                    # int(self.ui.txReprovadoE.text()),
+                                                    # int(self.ui.txReprovadoD.text()),
+                                                    # int(self.ui.txRetrabalhoE.text()),
+                                                    # int(self.ui.txRetrabalhoD.text()),
+                                                    # QDateTime.currentDateTime(),
+                                                    # QDateTime.currentDateTime(),
+                                                    # self.dado.nome_login,
+                                                    # 0,# Zero indica que não terminou rotina
+                                                    # int(self.ui.txNumerosCiclos.text())
+                                                    # )
+                # else:
+                    # self.database.update_record_rotina_by_name_sem_data(self._nome_rotina_execucao,
+                                                                        # self._nome_rotina_execucao,
+                                                                        # int(self.ui.txAprovadoE.text()),
+                                                                        # int(self.ui.txAprovadoD.text()),
+                                                                        # int(self.ui.txReprovadoE.text()),
+                                                                        # int(self.ui.txReprovadoD.text()),
+                                                                        # int(self.ui.txRetrabalhoE.text()),
+                                                                        # int(self.ui.txRetrabalhoD.text()),
+                                                                        # self.dado.nome_login,
+                                                                        # 0,# Zero indica que não terminou rotina
+                                                                        # int(self.ui.txNumerosCiclos.text())
+                                                                    # )
+            # else:
+                # self.database.update_record_rotina_by_name_finalizado(self._nome_rotina_execucao,
+                                                                        # self._nome_rotina_execucao,
+                                                                        # int(self.ui.txAprovadoE.text()),
+                                                                        # int(self.ui.txAprovadoD.text()),
+                                                                        # int(self.ui.txReprovadoE.text()),
+                                                                        # int(self.ui.txReprovadoD.text()),
+                                                                        # int(self.ui.txRetrabalhoE.text()),
+                                                                        # int(self.ui.txRetrabalhoD.text()),
+                                                                        # QDateTime.currentDateTime(),#Data de finalização
+                                                                        # self.dado.nome_login,
+                                                                        # 1,# Um indica terminou rotina
+                                                                        # int(self.ui.txNumerosCiclos.text())
+                                                                    # )
+        # except:
+            # print("Erro em salvar_rotina(), banco de dados")
 
 
     def voltar(self):

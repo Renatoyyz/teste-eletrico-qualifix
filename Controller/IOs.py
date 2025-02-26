@@ -148,15 +148,15 @@ class IO_MODBUS:
         self.cnt_entradas = 1
         try:
             self.ser = serial.Serial(
-                                        port='/dev/ttyUSB0',  # Porta serial padrão no Raspberry Pi 4
-                                        # port='/dev/tty.URT0',  # Porta serial padrão no Raspberry Pi 4
+                                        #port='/dev/ttyUSB0',  # Porta serial padrão no Raspberry Pi 4
+                                        port='/dev/ttyAMA0',  # Porta serial padrão no Raspberry Pi 4
                                         baudrate=9600,       # Taxa de baud
                                         bytesize=8,
                                         parity="N",
                                         stopbits=1,
-                                        timeout=1,            # Timeout de leitura
-                                        #xonxoff=False,         # Controle de fluxo por software (XON/XOFF)
-                                        #rtscts=True
+                                        timeout=0.1,            # Timeout de leitura
+                                        xonxoff=False,         # Controle de fluxo por software (XON/XOFF)
+                                        rtscts=True
                                     )
         except Exception as e:
             print(f"Erro ao conectar com a serial: {e}")
@@ -299,12 +299,14 @@ class IO_MODBUS:
                         dados_recebidos = dados_recebidos[14:16]
                         dados_recebidos = int(dados_recebidos,16)
                         return dados_recebidos
+                    #return dados_recebidos
                     else:
                         if i > 1:
                             self.reset_serial()
+                
                 else:
                     if i > 1:
-                        self.reset_serial()
+                       self.reset_serial()
             except Exception as e:
                 print(f"Erro de comunicação: {e}")
                 return -1 # Indica erro de alguma natureza....
@@ -393,14 +395,15 @@ class IO_MODBUS:
         return 0
     
     def reset_serial(self):
-        try:
-            self.ser.close()
-            time.sleep(0.5)  # Aguarda um curto período antes de reabrir a porta
-            self.ser.open()
-            self.ser.flushInput()  # Limpa o buffer de entrada após reabrir a porta
-            print("Porta serial resetada com sucesso.")
-        except Exception as e:
-            print(f"Erro ao resetar a porta serial: {e}")
+        pass
+        #try:
+            #self.ser.close()
+            #time.sleep(0.5)  # Aguarda um curto período antes de reabrir a porta
+            #self.ser.open()
+            #self.ser.flushInput()  # Limpa o buffer de entrada após reabrir a porta
+            #print("Porta serial resetada com sucesso.")
+        #except Exception as e:
+            #print(f"Erro ao resetar a porta serial: {e}")
 
     def retorna_bit_desligar_0_8(self, adr, bit):
         out_loc = 0

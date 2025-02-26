@@ -5,3 +5,291 @@
 2024-10-22 17:48:53,053:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 7 - probably unsupported type.
 2024-10-22 18:08:29,700:ERROR:Erro ao criar registro rotina: Error binding parameter 7 - probably unsupported type.
 2024-10-22 18:09:56,481:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 7 - probably unsupported type.
+2024-10-23 11:28:47,081:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-23 11:45:39,393:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-23 11:48:00,689:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-23 11:48:45,343:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-23 11:52:55,092:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-23 11:54:31,462:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-23 12:02:23,153:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-23 12:06:01,358:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-23 12:09:31,470:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-23 12:10:13,077:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-23 12:12:50,287:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-23 12:12:52,795:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-23 12:19:08,885:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-23 12:23:46,231:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-23 12:24:57,041:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-23 12:25:40,235:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-23 12:26:56,882:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-23 12:27:41,953:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-23 12:32:09,566:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-23 12:34:18,159:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-23 14:37:00,308:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-24 00:31:27,850:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-24 03:00:53,623:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-24 05:46:58,982:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-24 08:35:29,332:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-24 12:53:53,900:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-24 12:55:16,399:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-24 14:05:21,086:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-24 18:13:38,438:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-24 18:14:27,258:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-24 22:57:58,002:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-25 07:03:27,245:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-25 07:04:50,463:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-25 09:54:06,826:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-25 09:54:30,194:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-25 09:54:45,932:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-25 09:56:15,383:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-26 10:54:17,775:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-27 09:52:39,258:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-27 09:53:19,420:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-27 09:54:26,405:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-27 11:41:53,346:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-27 11:43:09,323:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-27 11:49:35,348:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-27 11:50:30,845:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-27 19:47:09,097:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-28 06:30:17,724:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-28 15:30:18,011:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-29 00:20:23,760:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-29 10:22:03,876:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-29 20:12:42,575:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-30 02:00:34,319:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-30 06:24:12,517:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-30 06:24:43,590:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-30 06:31:55,699:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-30 06:32:45,060:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-30 06:36:45,722:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-30 06:39:36,225:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-30 06:46:34,372:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-30 06:46:36,272:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-30 06:50:25,450:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-30 06:52:30,398:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-30 07:06:44,576:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-30 07:06:47,763:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-30 07:07:50,499:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-30 07:11:37,662:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-30 07:21:51,825:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-30 07:34:22,828:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-30 07:35:04,105:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-30 07:42:39,732:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-30 07:44:21,770:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-30 07:56:21,104:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-30 10:24:32,197:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-30 13:15:45,483:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-30 13:40:30,529:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-30 14:51:31,957:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-30 17:23:53,167:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-30 17:38:12,205:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-30 18:03:00,845:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-31 03:36:18,566:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-10-31 13:41:47,744:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-11-29 07:31:49,956:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-12-02 08:10:39,852:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-12-03 07:32:21,285:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-12-04 08:01:35,379:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-12-05 07:42:05,238:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-12-05 14:07:57,258:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-12-06 07:36:30,819:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-12-09 07:45:34,417:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-12-09 17:30:35,329:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-12-09 19:12:51,936:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-12-10 13:11:49,781:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-12-10 17:31:25,938:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-12-11 16:39:36,472:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-12-17 23:55:23,888:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-12-17 23:55:52,500:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2024-12-17 23:57:02,001:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-12-17 23:59:44,999:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2024-12-18 00:03:55,689:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-12-27 07:35:09,118:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-12-27 07:41:05,064:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2024-12-27 09:55:36,221:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-02 10:47:52,893:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-02 17:13:41,287:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-02 17:14:04,878:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-02 17:15:31,329:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-03 03:17:59,243:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-03 13:18:25,816:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-03 15:57:11,801:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-03 15:57:39,426:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-03 16:06:05,936:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-03 16:07:16,575:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-03 16:14:47,800:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-03 16:15:48,098:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-03 21:30:15,337:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-03 21:31:20,543:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-03 21:31:21,897:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-03 21:32:31,096:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-03 21:33:54,100:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-03 21:34:43,617:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-03 23:06:47,687:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-03 23:37:39,011:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-03 23:42:51,370:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-03 23:44:07,389:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-03 23:49:10,602:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-03 23:51:12,238:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-03 23:51:18,893:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-03 23:57:31,348:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-03 23:57:55,342:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-03 23:58:59,207:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-04 00:01:47,491:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-04 00:02:22,614:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-04 00:03:40,784:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-04 00:07:09,637:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-04 00:09:14,836:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-04 00:12:16,500:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-04 00:13:20,577:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-04 05:49:09,352:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-04 06:03:15,363:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-04 06:10:29,158:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-04 06:10:49,525:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-04 06:11:22,455:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-04 06:30:10,865:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-04 06:39:49,830:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-04 06:45:06,134:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-04 06:46:04,243:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-04 06:48:52,201:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-04 07:17:42,988:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-04 07:37:47,392:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-04 07:54:18,664:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-04 15:12:59,429:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-04 15:22:01,627:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-04 19:10:38,297:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-04 19:14:43,105:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-04 19:17:05,411:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-04 21:32:14,852:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-04 21:40:19,938:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-05 02:13:01,631:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-05 02:13:07,563:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-05 02:14:54,322:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-05 03:01:35,596:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-05 05:09:54,675:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-05 05:19:15,273:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-05 12:57:47,437:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-05 15:53:44,023:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 01:44:28,653:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 11:10:46,021:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 11:15:57,318:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 11:35:12,217:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 12:51:25,654:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 13:51:34,859:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 13:51:52,723:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 13:53:52,790:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 13:54:19,034:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 13:57:36,304:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 14:01:20,839:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 14:02:17,147:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 14:02:32,170:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 14:02:33,566:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 14:03:14,920:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 14:05:20,820:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 14:05:54,662:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 14:09:54,773:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 14:15:17,153:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 14:21:59,389:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 14:22:47,643:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 14:30:37,998:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 14:30:40,203:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 14:31:41,264:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 14:33:09,847:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 14:39:39,490:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 15:19:22,596:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 15:21:30,175:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 15:25:06,514:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 15:31:39,347:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 15:35:01,615:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 19:50:03,783:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 20:19:12,667:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 20:45:14,291:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 21:00:22,738:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 21:11:30,537:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 21:41:41,414:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 22:10:18,265:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 22:30:32,524:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 22:41:58,010:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 22:44:51,363:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 22:44:56,762:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 22:50:17,653:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 22:50:23,454:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 22:58:56,364:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 23:04:09,031:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 23:04:20,445:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 23:09:42,443:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 23:14:56,539:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 23:14:56,806:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-06 23:21:31,897:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-07 00:01:18,666:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-07 00:03:00,913:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-07 01:34:53,926:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-07 03:49:00,523:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-07 04:11:30,556:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-07 04:11:49,215:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-07 04:11:50,393:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-07 04:13:26,211:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-07 09:30:48,302:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-07 09:31:13,704:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-07 09:37:16,353:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-07 15:14:39,088:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-07 20:51:55,235:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-07 20:51:57,285:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-07 20:51:58,695:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-07 20:52:15,123:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-07 21:35:19,489:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-07 22:20:25,461:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-07 22:20:26,007:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-07 22:24:56,645:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-07 23:55:32,742:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-07 23:55:58,403:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-07 23:56:25,159:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-08 03:20:10,837:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-08 06:33:05,826:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-08 07:45:12,105:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-08 08:43:40,444:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-08 08:49:47,014:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-08 08:50:07,743:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-08 09:46:53,315:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-08 10:47:10,341:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-08 11:57:39,781:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-08 13:44:25,406:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-08 13:44:38,512:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-08 13:44:44,991:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-08 13:45:27,842:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-08 13:46:54,380:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-08 18:06:18,286:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-08 18:18:25,084:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-08 18:23:46,837:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-08 20:02:21,837:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-08 20:02:57,786:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-09 02:01:00,872:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-09 02:03:49,098:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-09 02:07:18,868:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-09 02:09:31,530:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-09 02:10:35,611:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+                                                                                                                                                                                                                                                                                                                    2025-01-09 04:18:57,966:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-09 12:24:05,948:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-09 12:28:40,012:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-09 12:38:34,447:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-09 12:59:41,434:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-09 13:00:21,012:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-09 13:03:39,970:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-09 13:06:15,140:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-09 13:19:38,284:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-09 13:20:37,148:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-09 20:53:25,832:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-09 21:00:49,677:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-09 21:00:51,718:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-09 21:02:38,033:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-09 21:17:35,656:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-09 21:17:38,018:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-09 21:31:23,961:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-10 01:04:57,476:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-10 01:05:08,657:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-10 01:07:05,982:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-10 01:18:08,043:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-10 01:18:21,977:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-10 01:20:04,546:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-10 01:35:30,583:ERROR:Erro ao criar registro rotina: Error binding parameter 8: type 'QDateTime' is not supported
+2025-01-10 02:12:57,620:ERROR:Erro ao atualizar rotina por nome (com data de finalização): Error binding parameter 8: type 'QDateTime' is not supported
