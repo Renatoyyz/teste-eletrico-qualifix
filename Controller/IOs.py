@@ -268,7 +268,7 @@ class IO_MODBUS:
         parte_superior = (crc_result >> 8) & 0xFF  # Desloca 8 bits para a direita e aplica a máscara 0xFF
         parte_inferior = crc_result & 0xFF        # Aplica a máscara 0xFF diretamente
 
-        for i in range(3):
+        for _ in range(3):
             try:
                 # Repete-se os comandos em decimal com os devidos bytes de CRC
                 self.ser.write([adr,0x0f,0,0,0,16,2,out_val_l,out_val_h,parte_inferior,parte_superior])
@@ -299,14 +299,6 @@ class IO_MODBUS:
                         dados_recebidos = dados_recebidos[14:16]
                         dados_recebidos = int(dados_recebidos,16)
                         return dados_recebidos
-                    #return dados_recebidos
-                    else:
-                        if i > 1:
-                            self.reset_serial()
-                
-                else:
-                    if i > 1:
-                       self.reset_serial()
             except Exception as e:
                 print(f"Erro de comunicação: {e}")
                 return -1 # Indica erro de alguma natureza....
@@ -334,7 +326,7 @@ class IO_MODBUS:
             parte_superior = (crc_result >> 8) & 0xFF  # Desloca 8 bits para a direita e aplica a máscara 0xFF
             parte_inferior = crc_result & 0xFF        # Aplica a máscara 0xFF diretamente
 
-            for i in range(3):
+            for _ in range(3):
                 try:
                     # Repete-se os comandos em decimal com os devidos bytes de CRC
                     self.ser.write([adr,2,0,0,0,16,parte_inferior, parte_superior])
@@ -376,16 +368,7 @@ class IO_MODBUS:
                                 test = 0x01*( pow(2,(input-8)-1) )
                                 result = ( (hex_part2 & (test))  )
                                 result = result>>((input-8)-1)
-
-                            return result
-                        else:
-                            if i > 1:
-                                self.reset_serial()
-                            # return -1
-                    else:
-                        if i > 1:
-                            self.reset_serial()
-                    
+                            return result                    
                 except:
                     print("Erro de comunicação")
                     return -1 # Indica erro de alguma natureza....
@@ -393,17 +376,6 @@ class IO_MODBUS:
 
 
         return 0
-    
-    def reset_serial(self):
-        pass
-        #try:
-            #self.ser.close()
-            #time.sleep(0.5)  # Aguarda um curto período antes de reabrir a porta
-            #self.ser.open()
-            #self.ser.flushInput()  # Limpa o buffer de entrada após reabrir a porta
-            #print("Porta serial resetada com sucesso.")
-        #except Exception as e:
-            #print(f"Erro ao resetar a porta serial: {e}")
 
     def retorna_bit_desligar_0_8(self, adr, bit):
         out_loc = 0

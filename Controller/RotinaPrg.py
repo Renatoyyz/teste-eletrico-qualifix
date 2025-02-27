@@ -310,19 +310,56 @@ class RotinaPrg:
             |_______________Nome da conexão
     """
 
+    def aciona_combinacao(self, adr, i, lado):
+        if lado == "esquerdo":
+            condutividade = self.condutividade_esquerdo
+        elif lado == "direito":
+            condutividade = self.condutividade_direito
+        else:
+            raise ValueError("Lado deve ser 'esquerdo' ou 'direito'")
+
+        # Aciona pino da tomada de conectores - DO_0x do ADR_x
+        if self.io.wp_8027(adr, condutividade[f"ligacao{i}"][0], 1) == -1:
+            return False
+        # Aciona pino da tomada de eletrodos - DO_0x+8 do ADR_x - Tem que adicionar 8 para ir de 9-16 que é 1+8 - 8+8
+        if self.io.wp_8027(adr, condutividade[f"ligacao{i}"][2] + 8, 1) == -1:
+            return False
+        return True
+    
+    def desaciona_combinacao(self, adr, i, lado):
+        if lado == "esquerdo":
+            condutividade = self.condutividade_esquerdo
+        elif lado == "direito":
+            condutividade = self.condutividade_direito
+        else:
+            raise ValueError("Lado deve ser 'esquerdo' ou 'direito'")
+
+        # Desaciona pino da tomada de conectores - DO_0x do ADR_x
+        if self.io.wp_8027(adr, condutividade[f"ligacao{i}"][0], 0) == -1:
+            return False
+        # Desaciona pino da tomada de eletrodos - DO_0x+8 do ADR_x
+        if self.io.wp_8027(adr, condutividade[f"ligacao{i}"][2] + 8, 0) == -1:
+            return False
+        return True
+
     def combinacao_condutividade_esquerdo(self):
         result = []
+        combinacao_ok = False
         
         for i in range(1,9):
             if self.condutividade_esquerdo[f"ligacao{i}"][3] != "":
                 # Associa qual eletrodo está sendo associado, para acesso externo à classe
                 self.eletrodo_testando_condu_e[0]= self.condutividade_esquerdo[f"ligacao{i}"][1][0]
-                # Aciona pino da tomada de conectores - DO_0x do ADR_1
-                self.io.wp_8027(self.io.ADR_1,self.condutividade_esquerdo[f"ligacao{i}"][0],1)
-                
-                
-                # Aciona pino da tomada de eletrodos - DO_0x+8 do ADR_1 - Tem que adicionar 8 para ir de 9-16 que é 1+8 - 8+8
-                self.io.wp_8027(self.io.ADR_1,self.condutividade_esquerdo[f"ligacao{i}"][2]+8,1)
+
+                # # Aciona pino da tomada de conectores - DO_0x do ADR_1
+                # self.io.wp_8027(self.io.ADR_1,self.condutividade_esquerdo[f"ligacao{i}"][0],1)
+                # # Aciona pino da tomada de eletrodos - DO_0x+8 do ADR_1 - Tem que adicionar 8 para ir de 9-16 que é 1+8 - 8+8
+                # self.io.wp_8027(self.io.ADR_1,self.condutividade_esquerdo[f"ligacao{i}"][2]+8,1)
+
+                for _ in range(10):
+                    combinacao_ok = self.aciona_combinacao(self.io.ADR_1, i, "esquerdo")
+                    if combinacao_ok == True:
+                        break
 
                 # Aguarda um pequeno tempo para acionamento do rele
                 if self.sleep_check_erro(self.TEMPO_ACIONAMENTO_RELE) == False:
@@ -331,8 +368,9 @@ class RotinaPrg:
                     # índice 0 = número da ligação índice 1 = Nome da ligação índice 2 = status de ligaçao - 0=não passou 1=passou
                     for _ in range(10):
                         self.eletrodo_testando_condu_e[1] = self.io.wp_8026(self.io.ADR_3, 8)  # Associa se eletrodo passou ou não passou
-                        if self.eletrodo_testando_condu_e[1] == 1:
+                        if self.eletrodo_testando_condu_e[1] != -1 and self.eletrodo_testando_condu_e[1] == 1:
                             break
+
                     if self.eletrodo_testando_condu_e[1] == 0:
                         # liga contator que seleciona tensão megometro
                         self.io.wp_8027(self.io.ADR_3,1,1)
@@ -348,28 +386,39 @@ class RotinaPrg:
                     result.append( [i,self.condutividade_esquerdo[f"ligacao{i}"][3],self.eletrodo_testando_condu_e[1]] )
 
                     # desliga saída para não conflitar com o próximo
-                    self.io.wp_8027(self.io.ADR_1,self.condutividade_esquerdo[f"ligacao{i}"][0],0)
-                    self.io.wp_8027(self.io.ADR_1,self.condutividade_esquerdo[f"ligacao{i}"][2]+8,0)
+                    # self.io.wp_8027(self.io.ADR_1,self.condutividade_esquerdo[f"ligacao{i}"][0],0)
+                    # self.io.wp_8027(self.io.ADR_1,self.condutividade_esquerdo[f"ligacao{i}"][2]+8,0)
+                    for _ in range(10):
+                        if self.desaciona_combinacao(self.io.ADR_1, i, "esquerdo") == True:
+                            break
                 else:
                     result = []
                     # desliga saída para não conflitar com o próximo
-                    self.io.wp_8027(self.io.ADR_1,self.condutividade_esquerdo[f"ligacao{i}"][0],0)
-                    self.io.wp_8027(self.io.ADR_1,self.condutividade_esquerdo[f"ligacao{i}"][2]+8,0)
+                    # self.io.wp_8027(self.io.ADR_1,self.condutividade_esquerdo[f"ligacao{i}"][0],0)
+                    # self.io.wp_8027(self.io.ADR_1,self.condutividade_esquerdo[f"ligacao{i}"][2]+8,0)
+                    for _ in range(10):
+                        if self.desaciona_combinacao(self.io.ADR_1, i, "esquerdo") == True:
+                            break
                     break
         return result
 
     def combinacao_condutividade_direito(self):
         result = []
+        combinacao_ok = False
+
         for i in range(1,9):
             if self.condutividade_direito[f"ligacao{i}"][3] != "":
                 # Associa qual eletrodo está sendo assiciado, para acesso externo à classe
                 self.eletrodo_testando_condu_d[0]=self.condutividade_direito[f"ligacao{i}"][1][0]
-                # Aciona pino da tomada de conectores - DO_0x do ADR_1
-                self.io.wp_8027(self.io.ADR_2,self.condutividade_direito[f"ligacao{i}"][0],1)
-                
-                
-                # Aciona pino da tomada de eletrodos - DO_0x+8 do ADR_1 - Tem que adicionar 8 para ir de 9-16 que é 1+8 - 8+8
-                self.io.wp_8027(self.io.ADR_2,self.condutividade_direito[f"ligacao{i}"][2]+8,1)
+
+                # # Aciona pino da tomada de conectores - DO_0x do ADR_1
+                # self.io.wp_8027(self.io.ADR_2,self.condutividade_direito[f"ligacao{i}"][0],1)
+                # # Aciona pino da tomada de eletrodos - DO_0x+8 do ADR_1 - Tem que adicionar 8 para ir de 9-16 que é 1+8 - 8+8
+                # self.io.wp_8027(self.io.ADR_2,self.condutividade_direito[f"ligacao{i}"][2]+8,1)
+                for _ in range(10):
+                    combinacao_ok = self.aciona_combinacao(self.io.ADR_2, i, "direito")
+                    if combinacao_ok == True:
+                        break
 
                 # Aguarda um pequeno tempo para acionamento do rele
                 if self.sleep_check_erro(self.TEMPO_ACIONAMENTO_RELE) == False:
@@ -378,7 +427,7 @@ class RotinaPrg:
                     # índice 0 = número da ligação índice 1 = Nome da ligação índice = status de ligaçao - 0=não passou 1=passou
                     for _ in range(10):
                         self.eletrodo_testando_condu_d[1] = self.io.wp_8026(self.io.ADR_3, 8)  # Associa se eletrodo passou ou não passou
-                        if self.eletrodo_testando_condu_d[1] == 1:
+                        if self.eletrodo_testando_condu_d[1] != -1 and self.eletrodo_testando_condu_d[1] == 1:
                             break
                             
                     if self.eletrodo_testando_condu_d[1] == 0:
@@ -396,13 +445,19 @@ class RotinaPrg:
                     result.append( [i,self.condutividade_direito[f"ligacao{i}"][3],self.eletrodo_testando_condu_d[1]] )
 
                     # desliga saída para não conflitar com o próximo
-                    self.io.wp_8027(self.io.ADR_2,self.condutividade_direito[f"ligacao{i}"][0],0)
-                    self.io.wp_8027(self.io.ADR_2,self.condutividade_direito[f"ligacao{i}"][2]+8,0)
+                    # self.io.wp_8027(self.io.ADR_2,self.condutividade_direito[f"ligacao{i}"][0],0)
+                    # self.io.wp_8027(self.io.ADR_2,self.condutividade_direito[f"ligacao{i}"][2]+8,0)
+                    for _ in range(10):
+                        if self.desaciona_combinacao(self.io.ADR_2, i, "direito") == True:
+                            break
                 else:
                     result = []
                     # desliga saída para não conflitar com o próximo
-                    self.io.wp_8027(self.io.ADR_2,self.condutividade_direito[f"ligacao{i}"][0],0)
-                    self.io.wp_8027(self.io.ADR_2,self.condutividade_direito[f"ligacao{i}"][2]+8,0)
+                    # self.io.wp_8027(self.io.ADR_2,self.condutividade_direito[f"ligacao{i}"][0],0)
+                    # self.io.wp_8027(self.io.ADR_2,self.condutividade_direito[f"ligacao{i}"][2]+8,0)
+                    for _ in range(10):
+                        if self.desaciona_combinacao(self.io.ADR_2, i, "direito") == True:
+                            break
                     break
         return result              
     
@@ -595,6 +650,38 @@ class RotinaPrg:
         |______________Número da conexão
 """
 
+    def aciona_combinacao_iso(self, adr, i, lado):
+        if lado == "esquerdo":
+            isolacao = self.isolacao_esquerdo
+        elif lado == "direito":
+            isolacao = self.isolacao_direito
+        else:
+            raise ValueError("Lado deve ser 'esquerdo' ou 'direito'")
+
+        # Aciona pino da tomada de conectores - DO_0x do ADR_x
+        if self.io.wp_8027(adr, isolacao[f"ligacao{i}"][0], 1) == -1:
+            return False
+        # Aciona pino da tomada de eletrodos - DO_0x+8 do ADR_x
+        if self.io.wp_8027(adr, isolacao[f"ligacao{i}"][1] + 8, 1) == -1:
+            return False
+        return True
+    
+    def desaciona_combinacao_iso(self, adr, i, lado):
+        if lado == "esquerdo":
+            isolacao = self.isolacao_esquerdo
+        elif lado == "direito":
+            isolacao = self.isolacao_direito
+        else:
+            raise ValueError("Lado deve ser 'esquerdo' ou 'direito'")
+
+        # Desaciona pino da tomada de conectores - DO_0x do ADR_x
+        if self.io.wp_8027(adr, isolacao[f"ligacao{i}"][0], 0) == -1:
+            return False
+        # Desaciona pino da tomada de eletrodos - DO_0x+8 do ADR_x
+        if self.io.wp_8027(adr, isolacao[f"ligacao{i}"][1] + 8, 0) == -1:
+            return False
+        return True
+
     def combinacao_isolacao_esquerdo(self):
         result = []
         # Depois de conferido a isolação pelo megômetro, reseta relé que liga entrada
@@ -607,11 +694,15 @@ class RotinaPrg:
 
         for i in range(1,17):
             if self.isolacao_esquerdo[f"ligacao{i}"][2] != "":
-                # Aciona pino da tomada de conectores - DO_0x do ADR_1
-                self.io.wp_8027(self.io.ADR_1,self.isolacao_esquerdo[f"ligacao{i}"][0],1)
 
-                # Aciona pino da tomada de eletrodos - DO_0x+8 do ADR_1 - Tem que adicionar 8 para ir de 9-16 que é 1+8 - 8+8
-                self.io.wp_8027(self.io.ADR_1,self.isolacao_esquerdo[f"ligacao{i}"][1]+8,1)
+                # Aciona pino da tomada de conectores - DO_0x do ADR_1
+                # self.io.wp_8027(self.io.ADR_1,self.isolacao_esquerdo[f"ligacao{i}"][0],1)
+                # # Aciona pino da tomada de eletrodos - DO_0x+8 do ADR_1 - Tem que adicionar 8 para ir de 9-16 que é 1+8 - 8+8
+                # self.io.wp_8027(self.io.ADR_1,self.isolacao_esquerdo[f"ligacao{i}"][1]+8,1)
+
+                for _ in range(10):
+                    if self.aciona_combinacao_iso(self.io.ADR_1, i, "esquerdo") == True:
+                        break
 
                 # # Aciona Megômetro
                 # self.io.wp_8027(self.io.ADR_3,6,1)
@@ -620,22 +711,32 @@ class RotinaPrg:
 
                 # Aguarda um pequeno tempo para acionamento do rele que é setado pelo sensor ótico
                 if self.sleep_check_erro(self.TEMPO_ACIONAMENTO_RELE_ISO) == False:
+                    for _ in range(10):
+                        status_megometro = self.io.wp_8026(self.io.ADR_3, 1)
+                        if status_megometro != -1:
+                            break
                     # faz leitura e associa a variável
                     # índice 0 = número da ligação / índice 1 = Nome da ligação / índice 2 = status de ligaçao - 0=passou 1=não passou
-                    result.append( [i,self.isolacao_esquerdo[f"ligacao{i}"][2],self.io.wp_8026(self.io.ADR_3, 1)] )
+                    result.append( [i,self.isolacao_esquerdo[f"ligacao{i}"][2],status_megometro] )
                     self.eletrodo_testando_iso_e[0] = self.isolacao_esquerdo[f"ligacao{i}"][3]
                     self.eletrodo_testando_iso_e[1] = self.isolacao_esquerdo[f"ligacao{i}"][4]
 
                     # desliga saída para não conflitar com o próximo
-                    self.io.wp_8027(self.io.ADR_1,self.isolacao_esquerdo[f"ligacao{i}"][0],0)
-                    self.io.wp_8027(self.io.ADR_1,self.isolacao_esquerdo[f"ligacao{i}"][1]+8,0)
+                    # self.io.wp_8027(self.io.ADR_1,self.isolacao_esquerdo[f"ligacao{i}"][0],0)
+                    # self.io.wp_8027(self.io.ADR_1,self.isolacao_esquerdo[f"ligacao{i}"][1]+8,0)
+                    for _ in range(10):
+                        if self.desaciona_combinacao_iso(self.io.ADR_1, i, "esquerdo") == True:
+                            break
                     
                     self.reset_entreda_megometro()
                 else:
                     result = []
                     # desliga saída para não conflitar com o próximo
-                    self.io.wp_8027(self.io.ADR_1,self.isolacao_esquerdo[f"ligacao{i}"][0],0)
-                    self.io.wp_8027(self.io.ADR_1,self.isolacao_esquerdo[f"ligacao{i}"][1]+8,0)
+                    # self.io.wp_8027(self.io.ADR_1,self.isolacao_esquerdo[f"ligacao{i}"][0],0)
+                    # self.io.wp_8027(self.io.ADR_1,self.isolacao_esquerdo[f"ligacao{i}"][1]+8,0)
+                    for _ in range(10):
+                        if self.desaciona_combinacao_iso(self.io.ADR_1, i, "esquerdo") == True:
+                            break
                     break
 
         self.stop_megometro()
@@ -666,32 +767,48 @@ class RotinaPrg:
 
         for i in range(1,17):
             if self.isolacao_direito[f"ligacao{i}"][2] != "":
-                # Aciona pino da tomada de conectores - DO_0x do ADR_1
-                self.io.wp_8027(self.io.ADR_2,self.isolacao_direito[f"ligacao{i}"][0],1)
 
-                # Aciona pino da tomada de eletrodos - DO_0x+8 do ADR_1 - Tem que adicionar 8 para ir de 9-16 que é 1+8 - 8+8
-                self.io.wp_8027(self.io.ADR_2,self.isolacao_direito[f"ligacao{i}"][1]+8,1)
+                # # Aciona pino da tomada de conectores - DO_0x do ADR_1
+                # self.io.wp_8027(self.io.ADR_2,self.isolacao_direito[f"ligacao{i}"][0],1)
+                # # Aciona pino da tomada de eletrodos - DO_0x+8 do ADR_1 - Tem que adicionar 8 para ir de 9-16 que é 1+8 - 8+8
+                # self.io.wp_8027(self.io.ADR_2,self.isolacao_direito[f"ligacao{i}"][1]+8,1)
+
+                for _ in range(10):
+                    if self.aciona_combinacao_iso(self.io.ADR_2, i, "direito") == True:
+                        break
 
                 # Aguarda um pequeno tempo para acionamento do rele que é setado pelo sensor ótico
                 if self.sleep_check_erro(self.TEMPO_ACIONAMENTO_RELE_ISO) == False:
 
+                    for _ in range(10):
+                        status_megometro = self.io.wp_8026(self.io.ADR_3, 1)
+                        if status_megometro != -1:
+                            break
 
                     # faz leitura e associa a variável
                     # índice 0 = número da ligação / índice 1 = Nome da ligação / índice 2 = status de ligaçao - 0=passou 1=não passou
-                    result.append( [i,self.isolacao_direito[f"ligacao{i}"][2],self.io.wp_8026(self.io.ADR_3, 1)] )
+                    result.append( [i,self.isolacao_direito[f"ligacao{i}"][2],status_megometro] )
                     self.eletrodo_testando_iso_d[0] = self.isolacao_direito[f"ligacao{i}"][3]
                     self.eletrodo_testando_iso_d[1] = self.isolacao_direito[f"ligacao{i}"][4]
 
                     # desliga saída para não conflitar com o próximo
-                    self.io.wp_8027(self.io.ADR_2,self.isolacao_direito[f"ligacao{i}"][0],0)
-                    self.io.wp_8027(self.io.ADR_2,self.isolacao_direito[f"ligacao{i}"][1]+8,0)
+                    # self.io.wp_8027(self.io.ADR_2,self.isolacao_direito[f"ligacao{i}"][0],0)
+                    # self.io.wp_8027(self.io.ADR_2,self.isolacao_direito[f"ligacao{i}"][1]+8,0)
+
+                    for _ in range(10):
+                        if self.desaciona_combinacao_iso(self.io.ADR_2, i, "direito") == True:
+                            break
                     
                     self.reset_entreda_megometro()
                 else:
                     result = []
                     # desliga saída para não conflitar com o próximo
-                    self.io.wp_8027(self.io.ADR_2,self.isolacao_direito[f"ligacao{i}"][0],0)
-                    self.io.wp_8027(self.io.ADR_2,self.isolacao_direito[f"ligacao{i}"][1]+8,0)
+                    # self.io.wp_8027(self.io.ADR_2,self.isolacao_direito[f"ligacao{i}"][0],0)
+                    # self.io.wp_8027(self.io.ADR_2,self.isolacao_direito[f"ligacao{i}"][1]+8,0)
+
+                    for _ in range(10):
+                        if self.desaciona_combinacao_iso(self.io.ADR_2, i, "direito") == True:
+                            break
                     break
 
         self.stop_megometro()
