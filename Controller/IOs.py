@@ -272,7 +272,7 @@ class IO_MODBUS:
             try:
                 # Repete-se os comandos em decimal com os devidos bytes de CRC
                 self.ser.write([adr,0x0f,0,0,0,16,2,out_val_l,out_val_h,parte_inferior,parte_superior])
-                # self.ser.flush()
+                self.ser.flush()
                 # start_time = time.time()
 
                 while not self.ser.readable():
@@ -330,7 +330,7 @@ class IO_MODBUS:
                 try:
                     # Repete-se os comandos em decimal com os devidos bytes de CRC
                     self.ser.write([adr,2,0,0,0,16,parte_inferior, parte_superior])
-                    # self.ser.flush()
+                    self.ser.flush() # Limpa o buffer de saída
                     # start_time = time.time()
                     while not self.ser.readable():
                         # if time.time() - start_time > self.ser.timeout:
@@ -373,8 +373,6 @@ class IO_MODBUS:
                     print("Erro de comunicação")
                     return -1 # Indica erro de alguma natureza....
             return -1
-
-
         return 0
 
     def retorna_bit_desligar_0_8(self, adr, bit):

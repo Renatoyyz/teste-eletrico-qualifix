@@ -373,13 +373,13 @@ class RotinaPrg:
 
                     if self.eletrodo_testando_condu_e[1] == 0:
                         # liga contator que seleciona tensão megometro
-                        self.io.wp_8027(self.io.ADR_3,1,1)
+                        self.io.wp_8027(self.io.ADR_4,1,1)
                         # Aciona megômetro
                         self.start_megometro()
-                        time.sleep(1)
+                        time.sleep(0.4)
                         self.eletrodo_testando_condu_e[1] = self.io.wp_8026(self.io.ADR_3, 1)
                         # Desliga contator que seleciona tensão megometro
-                        self.io.wp_8027(self.io.ADR_3,1,0)
+                        self.io.wp_8027(self.io.ADR_4,1,0)
                         self.stop_megometro()
                         self.reset_entreda_megometro()
                     
@@ -432,13 +432,13 @@ class RotinaPrg:
                             
                     if self.eletrodo_testando_condu_d[1] == 0:
                         # liga contator que seleciona tensão megometro
-                        self.io.wp_8027(self.io.ADR_3,1,1)
+                        self.io.wp_8027(self.io.ADR_4,1,1)
                         # Aciona megômetro
                         self.start_megometro()
-                        time.sleep(1)
+                        time.sleep(0.4)
                         self.eletrodo_testando_condu_d[1] = self.io.wp_8026(self.io.ADR_3, 1)
                         # Desliga contator que seleciona tensão megometro
-                        self.io.wp_8027(self.io.ADR_3,1,0)
+                        self.io.wp_8027(self.io.ADR_4,1,0)
                         self.stop_megometro()
                         self.reset_entreda_megometro()
                             
